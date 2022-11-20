@@ -12,5 +12,5 @@ def hello_world():
 
 
 @app.route('/api/system_metrics')
-def cpu_metrics():
+def system_metrics_endpoint():
     return json.dumps(system_metrics()), 200, {'Content-Type': 'application/json'}
