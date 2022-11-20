@@ -1,5 +1,5 @@
 from flask import Flask
-from utils import system_metrics
+from metrics import system_metrics
 import json
 
 
