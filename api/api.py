@@ -18,5 +18,9 @@ def system_metrics_endpoint():
 
 @app.route('/api/processes')
 def system_processes():
-    with_cpu_usage = bool(request.args.get('cpu_usage'))
+    with_cpu_usage = False
+    query_arg = request.args.get('cpu_usage')
+    if query_arg == 'true' or query_arg == '1':
+        with_cpu_usage = True
+
     return json.dumps(processes_info(with_cpu_usage)), 200, {'Content-Type': 'application/json'}
