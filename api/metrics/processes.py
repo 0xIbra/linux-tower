@@ -15,6 +15,9 @@ def processes_info(with_cpu_usage=False):
             'name': proc.name(),
             'pid': proc.pid,
             'user': proc.username(),
+            'status': proc.status(),
+            'is_running': proc.is_running(),
+            'created_at': proc.create_time(),
             'usage': {
                 'cpu': cpu_usage,
                 'memory': {
@@ -23,5 +26,10 @@ def processes_info(with_cpu_usage=False):
                 }
             }
         })
+
+    if with_cpu_usage is True:
+        payload.sort(key=lambda e: e['usage']['cpu'], reverse=True)
+    else:
+        payload.sort(key=lambda e: e['usage']['memory']['rss'], reverse=True)
 
     return payload
