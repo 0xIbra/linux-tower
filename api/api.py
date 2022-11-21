@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from metrics import system_metrics, processes_info
 import json
 
@@ -18,4 +18,5 @@ def system_metrics_endpoint():
 
 @app.route('/api/processes')
 def system_processes():
-    return json.dumps(processes_info()), 200, {'Content-Type': 'application/json'}
+    with_cpu_usage = bool(request.args.get('cpu_usage'))
+    return json.dumps(processes_info(with_cpu_usage)), 200, {'Content-Type': 'application/json'}
