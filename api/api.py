@@ -1,6 +1,6 @@
 from flask import Flask, request
 from metrics import system_metrics, processes_info
-from programs.apache import is_apache_installed, apache_status, apache_service_show
+from programs.apache import is_apache_installed, apache_status, apache_state_details
 import json
 
 
@@ -36,7 +36,7 @@ def apache_status_endpoint():
     payload = {
         'data': {
             'status': apache_status(),
-            'details': apache_service_show()
+            'details': apache_state_details()
         }
     }
 

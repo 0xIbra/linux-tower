@@ -1,1 +1,1 @@
-from programs.apache import is_apache_installed
+from programs.apache import is_apache_installed, apache_state_details
