@@ -1,4 +1,4 @@
-from helpers import exec_shell
+from helpers import exec_shell, service_show
 import os
 
 
@@ -11,3 +11,11 @@ def is_apache_installed():
         return False
 
     return True
+
+
+def apache_status():
+    return exec_shell('service apache2 status')
+
+
+def apache_service_show():
+    return service_show('apache2')

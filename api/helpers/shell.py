@@ -13,3 +13,14 @@ def exec_shell(command):
         output = error
 
     return output
+
+
+def service_show(service_name):
+    formatted = {}
+    output = exec_shell(f'systemctl show {service_name} --no-page')
+    output = output.split('\n')
+    for line in output:
+        key, value = line.split('=', maxsplit=1)
+        formatted[key] = value
+
+    return formatted
