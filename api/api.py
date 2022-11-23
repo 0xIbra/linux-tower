@@ -1,6 +1,7 @@
 from flask import Flask, request
 from metrics import system_metrics, processes_info
 from programs.apache import is_apache_installed, apache_status, apache_state_details
+from programs.nginx import is_nginx_installed, nginx_status, nginx_state_details
 import json
 
 
@@ -37,6 +38,22 @@ def apache_status_endpoint():
         'data': {
             'status': apache_status(),
             'details': apache_state_details()
+        }
+    }
+
+    return json.dumps(payload), 200, {'Content-Type': 'application/json'}
+
+
+@app.route('/api/nginx/status')
+def nginx_status_endpoint():
+    is_installed = is_nginx_installed()
+    if is_installed is not True:
+        return json.dumps({'detail': 'Nginx does not seem to be installed on this server.'}), 404, {'Content-Type': 'application/json'}
+
+    payload = {
+        'data': {
+            'status': nginx_status(),
+            'details': nginx_state_details()
         }
     }
 
