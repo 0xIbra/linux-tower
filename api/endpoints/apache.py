@@ -6,7 +6,7 @@ from flask import jsonify
 @blueprint.route('/api/apache/status', methods=['GET'])
 def apache_status_endpoint():
     is_installed = is_apache_installed()
-    if is_installed is True:
+    if is_installed is not True:
         return jsonify({'detail': 'Apache does not seem to be installed on this server.'}), 404
 
     payload = {
