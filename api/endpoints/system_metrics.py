@@ -1,5 +1,5 @@
 from . import blueprint
-from metrics.system import system_metrics
+from helpers.metrics.system import system_metrics
 from flask import jsonify
 
 

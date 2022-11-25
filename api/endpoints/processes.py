@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from . import blueprint
-from metrics.processes import processes_info
+from helpers.metrics.processes import processes_info
 
 
 @blueprint.route('/api/processes', methods=['GET'])

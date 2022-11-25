@@ -1,4 +1,4 @@
-from programs.nginx import is_nginx_installed, nginx_status, nginx_state_details
+from helpers.programs.nginx import is_nginx_installed, nginx_status, nginx_state_details
 from . import blueprint
 from flask import jsonify
 
