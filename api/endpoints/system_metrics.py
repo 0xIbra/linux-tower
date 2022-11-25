@@ -1,8 +1,8 @@
 from . import blueprint
 from metrics.system import system_metrics
-import json
+from flask import jsonify
 
 
 @blueprint.route('/api/system_metrics', methods=['GET'])
 def system_metrics_endpoint():
-    return json.dumps(system_metrics()), 200, {'Content-Type': 'application/json'}
+    return jsonify(system_metrics())

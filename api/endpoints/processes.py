@@ -1,7 +1,6 @@
-from flask import request
+from flask import request, jsonify
 from . import blueprint
 from metrics.processes import processes_info
-import json
 
 
 @blueprint.route('/api/processes', methods=['GET'])
@@ -11,4 +10,4 @@ def system_processes_endpoint():
     if query_arg == 'true' or query_arg == '1':
         with_cpu_usage = True
 
-    return json.dumps(processes_info(with_cpu_usage)), 200, {'Content-Type': 'application/json'}
+    return jsonify(processes_info(with_cpu_usage))
