@@ -7,7 +7,6 @@ def is_nginx_installed():
         return False
 
     output = exec_shell('service nginx status')
-    print(output)
     if 'could not be found' in output:
         return False
 
