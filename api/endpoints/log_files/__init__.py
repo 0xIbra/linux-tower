@@ -31,7 +31,7 @@ def create_log_files_endpoint():
     db.session.add(logfile)
     db.session.commit()
 
-    return jsonify({'detail': 'log file successfully created'}), 200
+    return jsonify({'detail': 'log file successfully created.'}), 200
 
 
 @blueprint.route('/api/log_files/<id>', methods=['DELETE'])
