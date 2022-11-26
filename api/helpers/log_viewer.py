@@ -68,3 +68,32 @@ class LogViewer:
         fp.close()
 
         return logs
+
+    @staticmethod
+    def read_lines_reverse(f):
+        head = b""
+        f.seek(0, 2)
+        t = f.tell()
+        buffersize, maxbuffersize = 64, 4096
+        while True:
+            if t <= 0:
+                break
+            # Read next block
+            buffersize = min(buffersize * 2, maxbuffersize)
+            tprev = t
+            t = max(0, t - buffersize)
+            f.seek(t)
+            lines = f.read(tprev - t).splitlines(True)
+            # Align to line breaks
+            if not lines[-1].endswith((b"\n", b"\r")):
+                lines[-1] += head  # current tail is previous head
+            elif head == b"\n" and lines[-1].endswith(b"\r"):
+                lines[-1] += head  # Keep \r\n together
+            elif head:
+                lines.append(head)
+            head = lines.pop(0)  # can be '\n' (ok)
+            # Iterate over current block in reverse
+            for line in reversed(lines):
+                yield line
+        if head:
+            yield head
