@@ -8,6 +8,13 @@ class LogViewer:
         if not os.path.isfile(log_file):
             raise Exception(f'{log_file} file was not found.')
 
+    def read_first_non_null_line(self):
+        with open(self.__log_file) as f:
+            for line in f:
+                l = line.strip()
+                if l != '':
+                    return l
+
     def head(self, lines=10):
         with open(self.__log_file) as file:
             logs = []
