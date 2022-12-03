@@ -29,10 +29,19 @@ def create_alerts_endpoint():
 
     alert = Alerts(
         alert_type='logfile',
-        webhook_method=data['webhook_method'],
-        webhook_url=data['webhook_url'],
+        regex=data['regex'],
         logfile_path=data['logfile_path']
     )
+
+    if 'cooldown_time' in data:
+        alert.cooldown_time = data['cooldown_time']
+    if 'webhook_method' in data:
+        alert.webhook_method = data['webhook_method']
+    if 'webhook_url' in data:
+        alert.webhook_url = data['webhook_url']
+    if 'slack_webhook_url' in data:
+        alert.slack_webhook_url = data['slack_webhook_url']
+
     db.session.add(alert)
     db.session.commit()
 
@@ -47,12 +56,16 @@ def update_alert_endpoint(id):
     if alert is None:
         return jsonify({'detail': f'alert with ID "{id}" does not exist.'}), 404
 
+    if 'regex' in data:
+        alert.regex = data['regex']
     if 'webhook_method' in data:
         alert.webhook_method = data['webhook_method']
     if 'webhook_url' in data:
         alert.webhook_url = data['webhook_url']
     if 'logfile_path' in data:
         alert.logfile_path = data['logfile_path']
+    if 'slack_webhook_url' in data:
+        alert.slack_webhook_url = data['slack_webhook_url']
 
     db.session.commit()
 

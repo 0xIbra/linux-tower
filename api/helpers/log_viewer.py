@@ -15,6 +15,16 @@ class LogViewer:
                 if l != '':
                     return l
 
+    def read_last_non_null_line(self):
+        with open(self.__log_file, 'rb') as f:
+            gen = LogViewer.read_lines_reverse(f)
+            for line in gen:
+                line = line.decode('utf8').strip()
+                if line != '' and len(line) > 0:
+                    return line
+
+        return None
+
     def head(self, lines=10):
         with open(self.__log_file) as file:
             logs = []
@@ -59,6 +69,13 @@ class LogViewer:
             logs.append(l.decode('utf8'))
 
         return logs
+
+    # def tail_by_checksum(self, checksum):
+    #     logs = []
+    #     with open(self.__log_file, 'rb') as f:
+    #         reverse_read_gen = LogViewer.readlines_reversed(f)
+    #         for line in reverse_read_gen:
+    #             line = line.decode('utf8').strip()
 
     def readall(self):
         with open(self.__log_file) as f:
