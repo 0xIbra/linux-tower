@@ -66,6 +66,8 @@ def update_alert_endpoint(id):
         alert.logfile_path = data['logfile_path']
     if 'slack_webhook_url' in data:
         alert.slack_webhook_url = data['slack_webhook_url']
+    if 'cooldown_time' in data:
+        alert.cooldown_time = data['cooldown_time']
 
     db.session.commit()
 
