@@ -1,9 +1,11 @@
 from helpers.programs.apache import is_apache_installed, apache_status, apache_state_details
 from . import blueprint
 from flask import jsonify
+from decorators import is_authenticated
 
 
 @blueprint.route('/api/apache/status', methods=['GET'])
+@is_authenticated
 def apache_status_endpoint():
     is_installed = is_apache_installed()
     if is_installed is not True:

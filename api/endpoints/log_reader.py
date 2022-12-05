@@ -1,9 +1,11 @@
 from flask import request, jsonify
 from helpers.log_viewer import LogViewer
 from . import blueprint
+from decorators import is_authenticated
 
 
 @blueprint.route('/api/logs/tail', methods=['GET'])
+@is_authenticated
 def logs_reader_endpoint():
     read_lines = request.args.get('lines')
     if read_lines is None:

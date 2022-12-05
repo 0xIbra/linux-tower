@@ -2,15 +2,18 @@ from endpoints import blueprint
 from entities import LogFiles
 from flask import request, jsonify
 from api import db
+from decorators import is_authenticated
 
 
 @blueprint.route('/api/log_files', methods=['GET'])
+@is_authenticated
 def get_log_files_endpoint():
     logfiles = db.session.query(LogFiles)
     return jsonify([file.to_json() for file in logfiles])
 
 
 @blueprint.route('/api/log_files/<id>', methods=['GET'])
+@is_authenticated
 def get_log_file_endpoint(id):
     logfile = db.session.get(LogFiles, id)
     if logfile is None:
@@ -20,6 +23,7 @@ def get_log_file_endpoint(id):
 
 
 @blueprint.route('/api/log_files', methods=['POST'])
+@is_authenticated
 def create_log_files_endpoint():
     data = request.get_json()
 
@@ -35,6 +39,7 @@ def create_log_files_endpoint():
 
 
 @blueprint.route('/api/log_files/<id>', methods=['DELETE'])
+@is_authenticated
 def delete_log_file_endpoint(id):
     logfile = db.session.execute(db.select(LogFiles).filter_by(id=id)).first()
     if logfile is None:

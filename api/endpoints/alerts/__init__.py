@@ -2,15 +2,18 @@ from endpoints import blueprint
 from entities import Alerts
 from flask import request, jsonify
 from api import db
+from decorators import is_authenticated
 
 
 @blueprint.route('/api/alerts', methods=['GET'])
+@is_authenticated
 def get_alerts_endpoint():
     alerts = db.session.query(Alerts)
     return jsonify([a.to_json() for a in alerts])
 
 
 @blueprint.route('/api/alerts/<id>', methods=['GET'])
+@is_authenticated
 def get_alert_by_id_endpoint(id):
     alert = db.session.get(Alerts, id)
     if alert is None:
@@ -20,6 +23,7 @@ def get_alert_by_id_endpoint(id):
 
 
 @blueprint.route('/api/alerts', methods=['POST'])
+@is_authenticated
 def create_alerts_endpoint():
     data = request.get_json()
 
@@ -49,6 +53,7 @@ def create_alerts_endpoint():
 
 
 @blueprint.route('/api/alerts/<id>', methods=['PUT'])
+@is_authenticated
 def update_alert_endpoint(id):
     data = request.get_json()
 
@@ -75,6 +80,7 @@ def update_alert_endpoint(id):
 
 
 @blueprint.route('/api/alerts/<id>', methods=['DELETE'])
+@is_authenticated
 def delete_alert_endpoint(id):
     alert = db.session.get(Alerts, id)
     if alert is None:
