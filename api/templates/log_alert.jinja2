@@ -1,0 +1,15 @@
+*Linux tower alert*
+
+server: `{{ hostname }}`
+
+{{ number_of_logs }} error logs detected in file: {{ log_file }}
+
+```
+{% for log_line in error_logs %}
+    ...
+    line {{ log_line.line }}: {{ log_line.log }}
+{% endfor %}
+
+```
+
+Soon there will be a link here to show you to the logs.

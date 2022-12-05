@@ -1,10 +1,9 @@
+from flask import render_template
 from entities import Alerts
-# from helpers.log_viewer import LogViewer
 from helpers.log_inspector import LogInspector
 from api import db
 from datetime import datetime
 import requests
-import sys
 import os
 
 
@@ -75,20 +74,14 @@ def __handle_alert(alert):
             alert.last_triggered_at = datetime.now()
             db.session.commit()
 
-            alert_template = f"""*Linux tower alert*
-server: {os.uname().nodename}
-{len(detected_error_logs)} error logs detected in file: {alert.logfile_path} :
-
-"""
-
-            for error_log in detected_error_logs:
-                alert_template += f"""At line: {error_log['line']}
-```
-{error_log['log']}
-```
-"""
+            hostname = os.uname().nodename
+            err_logs_count = len(detected_error_logs)
+            alert_template = render_template('log_alert.jinja2',
+                                             hostname=hostname,
+                                             number_of_logs=err_logs_count,
+                                             error_logs=detected_error_logs)
 
             if alert.slack_webhook_url is not None:
                 slack_message = Alerts.format_slack_message(alert_template)
-                res = requests.post(url=alert.slack_webhook_url, json=slack_message)
+                requests.post(url=alert.slack_webhook_url, json=slack_message)
 
