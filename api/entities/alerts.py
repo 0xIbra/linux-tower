@@ -15,6 +15,7 @@ class Alerts(db.Model):
     webhook_method = db.Column(db.String)
     webhook_url = db.Column(db.String)
     slack_webhook_url = db.Column(db.String)
+    discord_webhook_url = db.Column(db.String)
 
     def to_json(self):
         return {
@@ -28,9 +29,6 @@ class Alerts(db.Model):
             'cooldown_time': self.cooldown_time,
             'webhook_method': self.webhook_method,
             'webhook_url': self.webhook_url,
-            'slack_webhook_url': self.slack_webhook_url
+            'slack_webhook_url': self.slack_webhook_url,
+            'discord_webhook_url': self.discord_webhook_url
         }
-
-    @staticmethod
-    def format_slack_message(text):
-        return {'type': 'mrkdwn', 'text': text}

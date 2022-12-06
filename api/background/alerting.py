@@ -76,15 +76,21 @@ def __handle_alert(app, alert):
 
             hostname = os.uname().nodename
             err_logs_count = len(detected_error_logs)
-            alert_template = render_template('log_alert.jinja2',
-                                             hostname=hostname,
-                                             number_of_logs=err_logs_count,
-                                             error_logs=detected_error_logs)
+
+            available_parameters = {'hostname': hostname, 'number_of_logs': err_logs_count, 'error_logs': detected_error_logs}
 
             if alert.slack_webhook_url is not None:
-                slack_message = Alerts.format_slack_message(alert_template)
+                alert_template = render_template('alerts/slack/log_alert.jinja2', **available_parameters)
+                slack_message = {'type': 'mrkdwn', 'text': alert_template}
                 try:
                     requests.post(url=alert.slack_webhook_url, json=slack_message)
                 except Exception as e:
                     app.logger.error(e)
 
+            if alert.discord_webhook_url is not None:
+                alert_template = render_template('alerts/discord/log_alert.jinja2', **available_parameters)
+                discord_message = {'content': alert_template}
+                try:
+                    requests.post(url=alert.discord_webhook_url, json=discord_message)
+                except Exception as e:
+                    app.logger.error(e)

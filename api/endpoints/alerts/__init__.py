@@ -45,6 +45,8 @@ def create_alerts_endpoint():
         alert.webhook_url = data['webhook_url']
     if 'slack_webhook_url' in data:
         alert.slack_webhook_url = data['slack_webhook_url']
+    if 'discord_webhook_url' in data:
+        alert.discord_webhook_url = data['discord_webhook_url']
 
     db.session.add(alert)
     db.session.commit()
@@ -71,6 +73,8 @@ def update_alert_endpoint(id):
         alert.logfile_path = data['logfile_path']
     if 'slack_webhook_url' in data:
         alert.slack_webhook_url = data['slack_webhook_url']
+    if 'discord_webhook_url' in data:
+        alert.discord_webhook_url = data['discord_webhook_url']
     if 'cooldown_time' in data:
         alert.cooldown_time = data['cooldown_time']
 
