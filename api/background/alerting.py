@@ -15,10 +15,10 @@ def alerting_task(*args):
             if alert.regex is None or alert.regex == '':
                 continue
 
-            __handle_alert(alert)
+            __handle_alert(app, alert)
 
 
-def __handle_alert(alert):
+def __handle_alert(app, alert):
     if alert.alert_type == 'logfile':
         regex = alert.regex
         logfile_path = alert.logfile_path
@@ -83,5 +83,8 @@ def __handle_alert(alert):
 
             if alert.slack_webhook_url is not None:
                 slack_message = Alerts.format_slack_message(alert_template)
-                requests.post(url=alert.slack_webhook_url, json=slack_message)
+                try:
+                    requests.post(url=alert.slack_webhook_url, json=slack_message)
+                except Exception as e:
+                    app.logger.error(e)
 
