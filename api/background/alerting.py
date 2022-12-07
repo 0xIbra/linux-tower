@@ -1,6 +1,7 @@
 from flask import render_template
 from entities import Alerts
 from helpers.log_inspector import LogInspector
+from helpers.shell import service_show, does_service_exist, is_service_running
 from api import db
 from datetime import datetime
 import requests
@@ -15,12 +16,16 @@ def alerting_task(*args):
             if alert.regex is None or alert.regex == '':
                 continue
 
-            __handle_alert(app, alert)
+            if alert.alert_type == Alerts.ALERT_TYPE_LOG:
+                __handle_log_alert(app, alert)
+            elif alert.alert_type == Alerts.ALERT_TYPE_SERVICE:
+                __handle_service_alert(app, alert)
+            elif alert.alert_type == Alerts.ALERT_TYPE_METRIC:
+                __handle_metric_alert(app, alert)
 
 
-def __handle_alert(app, alert):
+def __handle_log_alert(app, alert):
     if alert.alert_type == 'logfile':
-        regex = alert.regex
         logfile_path = alert.logfile_path
         webhook_method = alert.webhook_method
         webhook_url = alert.webhook_url
@@ -94,3 +99,26 @@ def __handle_alert(app, alert):
                     requests.post(url=alert.discord_webhook_url, json=discord_message)
                 except Exception as e:
                     app.logger.error(e)
+
+            # TODO: email alert
+
+
+def __handle_service_alert(app, alert):
+    if alert.last_triggered_at is not None:
+        now = datetime.now()
+        minutes = divmod((now - alert.last_triggered_at).total_seconds(), 60)[0]
+
+        if minutes < alert.cooldown_time:
+            db.session.commit()
+
+            return False
+
+    service_data = service_show(alert.service_name)
+    is_running = is_service_running(service_data)
+    if is_running is False:
+        # service not running, dispatch alert
+        pass
+
+
+def __handle_metric_alert(app, alert):
+    pass

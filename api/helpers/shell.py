@@ -24,3 +24,14 @@ def service_show(service_name):
         formatted[key] = value
 
     return formatted
+
+
+def does_service_exist(service_data):
+    if 'LoadError' in service_data:
+        return False
+
+    return True
+
+
+def is_service_running(service_state_data):
+    return service_state_data['SubState'] == 'running'
