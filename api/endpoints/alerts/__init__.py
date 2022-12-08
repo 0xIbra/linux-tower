@@ -3,6 +3,7 @@ from entities import Alerts
 from flask import request, jsonify
 from api import db
 from decorators import is_authenticated
+from json import dumps as json_encode
 
 
 @blueprint.route('/api/alerts', methods=['GET'])
@@ -27,15 +28,31 @@ def get_alert_by_id_endpoint(id):
 def create_alerts_endpoint():
     data = request.get_json()
 
+    if 'alert_type' not in data:
+        return jsonify({'detail': '"alert_type" attribute is required'}), 400
+
+    alert_type = data['alert_type']
+    if alert_type not in Alerts.SUPPORTED_ALERT_TYPES:
+        return jsonify({'detail': f'"{alert_type}" alert type is not supported. Supported: {json_encode(Alerts.SUPPORTED_ALERT_TYPES)}'})
+
     alert = db.session.execute(db.select(Alerts).filter_by(logfile_path=data['logfile_path'])).first()
     if alert is not None:
         return jsonify({'detail': 'alert already exists.'}), 400
 
-    alert = Alerts(
-        alert_type='logfile',
-        regex=data['regex'],
-        logfile_path=data['logfile_path']
-    )
+    alert = Alerts(alert_type=data['alert_type'])
+
+    if 'regex' in data:
+        alert.regex = data['regex']
+    if 'logfile_path' in data:
+        alert.logfile_path = data['logfile_path']
+    if 'service_name' in data:
+        alert.service_name = data['service_name']
+    if 'metric_name' in data:
+        alert.metric_name = data['metric_name']
+    if 'metric_rule' in data:
+        alert.metric_rule = data['metric_rule']
+    if 'website_url' in data:
+        alert.website_url = data['website_url']
 
     if 'cooldown_time' in data:
         alert.cooldown_time = data['cooldown_time']
@@ -63,20 +80,34 @@ def update_alert_endpoint(id):
     if alert is None:
         return jsonify({'detail': f'alert with ID "{id}" does not exist.'}), 404
 
+    if 'alert_type' in data:
+        alert.alert_type = data['alert_type']
     if 'regex' in data:
         alert.regex = data['regex']
+    if 'logfile_path' in data:
+        alert.logfile_path = data['logfile_path']
+    if 'logfile_path' in data:
+        alert.logfile_path = data['logfile_path']
+
+    if 'service_name' in data:
+        alert.service_name = data['service_name']
+    if 'metric_name' in data:
+        alert.metric_name = data['metric_name']
+    if 'metric_rule' in data:
+        alert.metric_rule = data['metric_rule']
+    if 'website_url' in data:
+        alert.website_url = data['website_url']
+    if 'cooldown_time' in data:
+        alert.cooldown_time = data['cooldown_time']
+
     if 'webhook_method' in data:
         alert.webhook_method = data['webhook_method']
     if 'webhook_url' in data:
         alert.webhook_url = data['webhook_url']
-    if 'logfile_path' in data:
-        alert.logfile_path = data['logfile_path']
     if 'slack_webhook_url' in data:
         alert.slack_webhook_url = data['slack_webhook_url']
     if 'discord_webhook_url' in data:
         alert.discord_webhook_url = data['discord_webhook_url']
-    if 'cooldown_time' in data:
-        alert.cooldown_time = data['cooldown_time']
 
     db.session.commit()
 

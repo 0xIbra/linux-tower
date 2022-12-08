@@ -1,4 +1,5 @@
 from api import db
+import json
 
 
 class Alerts(db.Model):
@@ -28,6 +29,11 @@ class Alerts(db.Model):
 
     # for metric type alert
     metric_name = db.Column(db.String)
+    metric_rule = db.Column(db.String)
+
+    # for website type alert
+    website_url = db.Column(db.String)
+    last_seen_website_state = db.Column(db.Boolean)
 
     last_triggered_at = db.Column(db.DateTime)
     cooldown_time = db.Column(db.Integer)
@@ -36,6 +42,17 @@ class Alerts(db.Model):
     webhook_url = db.Column(db.String)
     slack_webhook_url = db.Column(db.String)
     discord_webhook_url = db.Column(db.String)
+
+    def get_metric_rule(self):
+        try:
+            return json.loads(self.metric_rule)
+        except:
+            pass
+
+        return self.metric_rule
+
+    def set_metric_rule(self, metric_rule: dict):
+        self.metric_rule = json.dumps(metric_rule)
 
     def to_json(self):
         return {
@@ -47,6 +64,9 @@ class Alerts(db.Model):
             'logfile_last_read_line_number': self.logfile_last_read_line_number,
             'service_name': self.service_name,
             'metric_name': self.metric_name,
+            'metric_rule': self.get_metric_rule(),
+            'website_url': self.website_url,
+            'last_seen_website_state': self.last_seen_website_state,
             'last_triggered_at': self.last_triggered_at,
             'cooldown_time': self.cooldown_time,
             'webhook_method': self.webhook_method,

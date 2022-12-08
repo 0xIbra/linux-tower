@@ -115,9 +115,34 @@ def __handle_service_alert(app, alert):
 
     service_data = service_show(alert.service_name)
     is_running = is_service_running(service_data)
+
+    available_parameters = {
+        'service_name': app.service_name,
+        'service_data': service_data,
+        'is_running': is_running
+    }
+
     if is_running is False:
         # service not running, dispatch alert
-        pass
+
+        if alert.slack_webhook_url is not None:
+            alert_template = render_template('alerts/slack/service_alert.jinja2', **available_parameters)
+            slack_msg = {'type': 'mrkdwn', 'text': alert_template}
+
+            try:
+                requests.post(url=alert.slack_webhook_url, json=slack_msg)
+            except Exception as e:
+                app.logger.error(e)
+
+        if alert.discord_webhook_url is not None:
+            alert_template = render_template('alerts/discord/service_alert.jinja2', **available_parameters)
+            discord_msg = {'content': alert_template}
+            try:
+                requests.post(url=alert.discord_webhook_url, json=discord_msg)
+            except Exception as e:
+                app.logger.error(e)
+
+        # TODO: email alert
 
 
 def __handle_metric_alert(app, alert):
