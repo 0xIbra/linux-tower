@@ -35,7 +35,15 @@ def create_alerts_endpoint():
     if alert_type not in Alerts.SUPPORTED_ALERT_TYPES:
         return jsonify({'detail': f'"{alert_type}" alert type is not supported. Supported: {json_encode(Alerts.SUPPORTED_ALERT_TYPES)}'})
 
-    alert = db.session.execute(db.select(Alerts).filter_by(logfile_path=data['logfile_path'])).first()
+    if alert_type == Alerts.ALERT_TYPE_LOG:
+        alert = db.session.execute(db.select(Alerts).filter_by(logfile_path=data['logfile_path'])).first()
+    elif alert_type == Alerts.ALERT_TYPE_SERVICE:
+        alert = db.session.execute(db.select(Alerts).filter_by(service_name=data['service_name'])).first()
+    elif alert_type == Alerts.ALERT_TYPE_METRIC:
+        alert = db.session.execute(db.select(Alerts).filter_by(metric_name=data['metric_name'])).first()
+    else:
+        return jsonify({'detail': f'unsupported "alert_type": "{alert_type}".'}), 400
+
     if alert is not None:
         return jsonify({'detail': 'alert already exists.'}), 400
 
