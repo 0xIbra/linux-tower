@@ -50,7 +50,7 @@ def create_alerts_endpoint():
     if 'metric_name' in data:
         alert.metric_name = data['metric_name']
     if 'metric_rule' in data:
-        alert.metric_rule = data['metric_rule']
+        alert.set_metric_rule(data['metric_rule'])
     if 'website_url' in data:
         alert.website_url = data['website_url']
 
@@ -94,7 +94,7 @@ def update_alert_endpoint(id):
     if 'metric_name' in data:
         alert.metric_name = data['metric_name']
     if 'metric_rule' in data:
-        alert.metric_rule = data['metric_rule']
+        alert.set_metric_rule(data['metric_rule'])
     if 'website_url' in data:
         alert.website_url = data['website_url']
     if 'cooldown_time' in data:

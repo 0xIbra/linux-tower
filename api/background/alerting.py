@@ -124,6 +124,8 @@ def __handle_service_alert(app, alert):
 
     if is_running is False:
         # service not running, dispatch alert
+        alert.last_triggered_at = datetime.now()
+        db.session.commit()
 
         if alert.slack_webhook_url is not None:
             alert_template = render_template('alerts/slack/service_alert.jinja2', **available_parameters)
