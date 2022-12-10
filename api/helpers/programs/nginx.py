@@ -2,37 +2,40 @@ from helpers import exec_shell, service_show
 import os
 
 
-def is_nginx_installed():
-    if not os.path.isdir('/etc/nginx'):
-        return False
+class Nginx:
 
-    output = exec_shell('service nginx status')
-    if 'could not be found' in output:
-        return False
+    @staticmethod
+    def is_installed():
+        if not os.path.isdir('/etc/nginx'):
+            return False
 
-    return True
+        output = exec_shell('service nginx status')
+        if 'could not be found' in output:
+            return False
 
+        return True
 
-def nginx_status():
-    return exec_shell('service nginx status')
+    @staticmethod
+    def status():
+        return exec_shell('service nginx status')
 
+    @staticmethod
+    def service_show():
+        return service_show('nginx')
 
-def nginx_service_show():
-    return service_show('nginx')
+    @staticmethod
+    def state_details():
+        details = Nginx.service_show()
 
+        state_data = {
+            'id': details['Id'],
+            'pid': details['MainPID'],
+            'description': details['Description'],
+            'state': details['SubState']
+        }
 
-def nginx_state_details():
-    details = nginx_service_show()
+        if state_data['state'] == 'running':
+            state_data['started_at'] = details['ActiveEnterTimestamp']
+            state_data['started_at_timestamp'] = details['ActiveEnterTimestampMonotonic']
 
-    state_data = {
-        'id': details['Id'],
-        'pid': details['MainPID'],
-        'description': details['Description'],
-        'state': details['SubState']
-    }
-
-    if state_data['state'] == 'running':
-        state_data['started_at'] = details['ActiveEnterTimestamp']
-        state_data['started_at_timestamp'] = details['ActiveEnterTimestampMonotonic']
-
-    return state_data
+        return state_data
