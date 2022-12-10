@@ -18,7 +18,11 @@ class ServiceAlertTask:
             now = datetime.now()
             minutes = divmod((now - self.__alert.last_triggered_at).total_seconds(), 60)[0]
 
-            if minutes < self.__alert.cooldown_time:
+            cooldown_time = self.__alert.cooldown_time
+            if cooldown_time is None:
+                cooldown_time = 15
+
+            if minutes < cooldown_time:
                 return False
 
         service_data = service_show(self.__alert.service_name)
