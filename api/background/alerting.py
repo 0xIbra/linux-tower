@@ -1,8 +1,6 @@
-from background.tasks import LogAlertTask
+from background.tasks import LogAlertTask, ServiceAlertTask
 from flask import render_template
 from entities import Alerts
-from helpers.log_inspector import LogInspector
-from helpers.shell import service_show, does_service_exist, is_service_running
 from helpers.metrics import system_metrics
 from api import db
 from datetime import datetime
@@ -19,52 +17,10 @@ def alerting_task(*args):
                 log_alert_task = LogAlertTask(app, db, alert)
                 log_alert_task.execute()
             elif alert.alert_type == Alerts.ALERT_TYPE_SERVICE:
-                __handle_service_alert(app, alert)
+                service_alert_task = ServiceAlertTask(app, db, alert)
+                service_alert_task.execute()
             elif alert.alert_type == Alerts.ALERT_TYPE_METRIC:
                 __handle_metric_alert(app, alert)
-
-
-def __handle_service_alert(app, alert):
-    if alert.last_triggered_at is not None:
-        now = datetime.now()
-        minutes = divmod((now - alert.last_triggered_at).total_seconds(), 60)[0]
-
-        if minutes < alert.cooldown_time:
-            return False
-
-    service_data = service_show(alert.service_name)
-    is_running = is_service_running(service_data)
-
-    available_parameters = {
-        'service_name': alert.service_name,
-        'service_data': service_data,
-        'hostname': os.uname().nodename,
-        'is_running': is_running
-    }
-
-    if is_running is False:
-        # service not running, dispatch alert
-        alert.last_triggered_at = datetime.now()
-        db.session.commit()
-
-        if alert.slack_webhook_url is not None:
-            alert_template = render_template('alerts/slack/service_alert.jinja2', **available_parameters)
-            slack_msg = {'type': 'mrkdwn', 'text': alert_template}
-
-            try:
-                requests.post(url=alert.slack_webhook_url, json=slack_msg)
-            except Exception as e:
-                app.logger.error(e)
-
-        if alert.discord_webhook_url is not None:
-            alert_template = render_template('alerts/discord/service_alert.jinja2', **available_parameters)
-            discord_msg = {'content': alert_template}
-            try:
-                requests.post(url=alert.discord_webhook_url, json=discord_msg)
-            except Exception as e:
-                app.logger.error(e)
-
-        # TODO: email alert
 
 
 def __handle_metric_alert(app, alert):
