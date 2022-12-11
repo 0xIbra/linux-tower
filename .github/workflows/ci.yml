@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - "*/*"
+    tags:
+      "*.*.*"
+  pull_request:
+    branches:
+      - master
+      - "*/*"
+
+jobs:
+  python3.8:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Spin up docker container
+        run: docker-compose -f api/docker-compose.ci.yml up -d python3.8
+
+      - name: install requirements-dev.txt
+        run: docker-compose -f api/docker-compose.ci.yml exec python3.8 pip install -r requirements-dev.txt
+
+      - name: install linux-commands-mocking to mock commands - step 1
+        run: docker-compose -f api/docker-compose.ci.yml exec python3.8 wget -O /tmp/remote_install.sh https://raw.githubusercontent.com/ibra-akv/linux-commands-mocking/master/remote_install.sh
+
+      - name: install linux-commands-mocking to mock commands - step 2
+        run: docker-compose -f api/docker-compose.ci.yml exec python3.8 chmod +x /tmp/remote_install.sh
+
+      - name: install linux-commands-mocking to mock commands - step 3
+        run: docker-compose -f api/docker-compose.ci.yml exec python3.8 sh /tmp/remote_install.sh
+
+      - name: mocked command output test
+        run: docker-compose -f api/docker-compose.ci.yml exec python3.8 ls /tmp
