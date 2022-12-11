@@ -42,7 +42,7 @@ class Apache:
 
     @staticmethod
     def list_vhosts():
-        vhost_dir = '/tmp/apache2_vhosts'
+        vhost_dir = '/etc/apache2/sites-enabled'
         vhosts = []
         file_list = os.listdir(vhost_dir)
         for file in file_list:
