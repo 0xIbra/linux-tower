@@ -38,4 +38,4 @@ jobs:
         run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 ls /tmp
 
       - name: echo $PATH
-        run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 echo $PATH
+        run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 env
