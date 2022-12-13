@@ -24,7 +24,7 @@ class LogInspector:
 
         return first_line
 
-    def search_regex(self, regex=None, start_line=None):
+    def search_regex(self, regex=None, start_line=None, return_limit=10):
         detections = []
         line_count = 0
         last_line = None
@@ -41,9 +41,9 @@ class LogInspector:
                     continue
 
                 if regex is not None:
-                    pattern = re.compile(rf"{regex}")
+                    pattern = re.compile(r'{}'.format(regex))
                     if bool(pattern.search(line)) is True:
-                        if len(detections) >= 10:
+                        if len(detections) >= return_limit:
                             break
 
                         detections.append({'line': i, 'log': line})
