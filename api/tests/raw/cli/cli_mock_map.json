@@ -1,0 +1,31 @@
+{
+  "service": [
+    {
+      "input": ["apache2", "status"],
+      "output": {
+        "file": "/opt/api/tests/raw/cli/status/apache2_status.log"
+      }
+    },
+    {
+      "input": ["nginx", "status"],
+      "output": {
+        "file": "/opt/api/tests/raw/cli/status/nginx_status_404.log"
+      }
+    }
+  ],
+
+  "systemctl": [
+    {
+      "input": ["show", "apache2", "--no-page"],
+      "output": {
+        "file": "/opt/api/tests/raw/cli/show/apache2_show.log"
+      }
+    },
+    {
+      "input": ["show", "nginx", "--no-page"],
+      "output": {
+        "file": "/opt/api/tests/raw/cli/show/nginx_show_404.log"
+      }
+    }
+  ]
+}

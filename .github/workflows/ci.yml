@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - "*"
       - "*/*"
     tags:
       "*.*.*"
@@ -34,8 +35,16 @@ jobs:
       - name: install linux-commands-mocking to mock commands - step 3
         run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 sh /tmp/remote_install.sh
 
-      - name: mocked command output test
-        run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 ls /tmp
+      - name: copy cli_mock_map.json
+        run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 cp /opt/api/tests/raw/cli/cli_mock_map.json /usr/local/climate/
 
-      - name: echo $PATH
-        run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 env
+      - name: create symlinks
+        run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 python3 /usr/local/climate/symlinker.py --mock-map-file=/usr/local/climate/cli_mock_map.json --mock-dir=/usr/local/climate
+
+      - name: run tests
+        run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 pytest tests -p no:warnings --cov=./ --cov-report=xml
+
+      - name: CodeCov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./api/coverage.xml

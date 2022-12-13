@@ -12,6 +12,8 @@ services:
     working_dir: /opt/api
     tty: true
     image: python:3.8
+    environment:
+      - PATH=/usr/local/climate:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     volumes:
       - './:/opt/api'
 
