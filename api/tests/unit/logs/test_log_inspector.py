@@ -6,6 +6,12 @@ from hashlib import md5
 
 
 def test_log_inspector_search_ok():
+    """
+    GIVEN a LogInspector component that reads .log files
+    WHEN the 'search_regex' method is called with $regex as param and $return_limit
+    THEN check that the searched term is found in returned result
+    """
+
     create_log_file()
 
     inspector = LogInspector(LOG_FILE)
@@ -20,6 +26,12 @@ def test_log_inspector_search_ok():
 
 
 def test_log_inspector_search_limited():
+    """
+    GIVEN a LogInspector component that reads .log files
+    WHEN the 'search_regex' method is called with $regex as param and $return_limit
+    THEN check that the returned result is limited to defined limit with $return_limit param
+    """
+
     create_log_file()
 
     inspector = LogInspector(LOG_FILE)
@@ -34,6 +46,12 @@ def test_log_inspector_search_limited():
 
 
 def test_log_inspector_search_with_start_line():
+    """
+    GIVEN a LogInspector component that reads .log files
+    WHEN the 'search_regex' method is called with $regex as param, $start_line and $return_limit
+    THEN check that the returned result contains lines starting from defined line $start_line param and not before
+    """
+
     create_log_file()
 
     inspector = LogInspector(LOG_FILE)
@@ -48,6 +66,12 @@ def test_log_inspector_search_with_start_line():
 
 
 def test_log_inspector_search_last_line():
+    """
+    GIVEN a LogInspector component that reads .log files
+    WHEN the 'search_regex' method is called with $regex as param and $start_line as last line of file
+    THEN check that only 1 line is returned
+    """
+
     create_log_file()
 
     inspector = LogInspector(LOG_FILE)
@@ -64,6 +88,12 @@ def test_log_inspector_search_last_line():
 
 
 def test_log_inspector_search_not_ok():
+    """
+    GIVEN a LogInspector component that reads .log files
+    WHEN the 'search_regex' method is called with $regex param containing a term that is not in the file
+    THEN check that empty result is returned
+    """
+
     create_log_file()
 
     inspector = LogInspector(LOG_FILE)
@@ -78,6 +108,12 @@ def test_log_inspector_search_not_ok():
 
 
 def test_log_inspector_check_first_line_checksum():
+    """
+    GIVEN a LogInspector component that reads .log files
+    WHEN the 'get_first_line_checksum' method is called
+    THEN check that the returned value is a md5 hash of the first line of the file
+    """
+
     create_log_file()
 
     inspector = LogInspector(LOG_FILE)
@@ -91,6 +127,12 @@ def test_log_inspector_check_first_line_checksum():
 
 
 def test_log_inspector_search_error():
+    """
+    GIVEN a LogInspector component that reads .log files
+    WHEN an instance is instantiated with non-existing file as parameter
+    THEN check that the component raises an 'Exception'
+    """
+
     with pytest.raises(Exception) as e:
         LogInspector('/file/does/not/exist.log')
 
