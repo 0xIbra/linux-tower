@@ -1,9 +1,11 @@
 from api import create_app, db
 from entities import Alerts
+from datetime import datetime, timedelta
 import pytest
+import jwt
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def testing_app():
     """fixture for testing the api"""
 
@@ -35,3 +37,17 @@ def add_alert():
         return alert
 
     return _add_alert
+
+
+@pytest.fixture(scope='module')
+def access_token(testing_app):
+    now = datetime.utcnow()
+    exp = now + timedelta(minutes=20)
+    payload = {
+        'username': 'tester',
+        'iat': now,
+        'exp': exp
+    }
+    access_token = jwt.encode(payload, testing_app.config['SECRET_KEY'], 'HS256')
+
+    return access_token
