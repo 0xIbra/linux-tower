@@ -16,6 +16,7 @@ services:
       - PATH=/usr/local/climate:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     volumes:
       - './:/opt/api'
+      - './tests/raw/cli/apache/vhosts:/etc/apache2/sites-enabled'
 
   python3.9:
     container_name: python3.9-tests
