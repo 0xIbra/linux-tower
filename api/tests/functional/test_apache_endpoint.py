@@ -1,7 +1,7 @@
 def test_apache_endpoint(testing_app, access_token):
     """
     GIVEN a Flask application configured for testing
-    WHEN a GET request is made to '/api/apache'
+    WHEN a GET request is made to '/api/apache/status'
     THEN check that apache state data is returned with a 200 http response
     """
 
