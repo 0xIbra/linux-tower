@@ -1,0 +1,52 @@
+from helpers.programs import Nginx
+
+
+def test_is_installed():
+    """
+    GIVEN a 'Nginx' class that groups together methods relevant to the Nginx systemd service
+    WHEN 'is_installed' method is called
+    THEN check that the returned value is true
+    """
+
+    is_installed = Nginx.is_installed()
+    assert is_installed is False
+
+
+def test_status():
+    """
+    GIVEN a 'Nginx' class that groups together methods relevant to the Nginx systemd service
+    WHEN 'status' method is called
+    THEN check that the returned value contains text saying nginx was not found
+    """
+
+    status = Nginx.status()
+    assert type(status) is str
+    assert 'could not be found' in status
+
+
+def test_service_show():
+    """
+    GIVEN a 'Nginx' class that groups together methods relevant to the Nginx systemd service
+    WHEN 'service_show' method is called
+    THEN check that the returned value is dict and contains relevant information
+    """
+
+    service_data = Nginx.service_show()
+    assert type(service_data) is dict
+    assert 'SubState' in service_data
+    assert service_data['SubState'] == 'dead'
+    assert 'LoadError' in service_data
+    assert 'nginx.service not found' in service_data['LoadError']
+
+
+def test_state_details():
+    """
+    GIVEN a 'Nginx' class that groups together methods relevant to the Nginx systemd service
+    WHEN 'state_details' method is called
+    THEN check that the returned value is dict and contains formatted data
+    """
+
+    state_details = Nginx.state_details()
+    assert type(state_details) is dict
+    assert state_details['state'] == 'dead'
+    assert 'started_at' not in state_details
