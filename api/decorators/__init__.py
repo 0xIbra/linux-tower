@@ -1,6 +1,6 @@
 from functools import wraps
 from flask import request, jsonify
-from wsgi import app
+from flask import current_app as app
 import jwt
 
 
@@ -17,7 +17,7 @@ def is_authenticated(f):
         try:
             jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
         except:
-            return jsonify({'message': 'access token is invalid.'})
+            return jsonify({'message': 'access token is invalid.'}), 401
 
         return f(*args, **kwargs)
 
