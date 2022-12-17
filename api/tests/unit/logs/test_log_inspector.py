@@ -1,23 +1,8 @@
 import pytest
 
 from helpers.log_inspector import LogInspector
+from tests.unit.logs import create_log_file, delete_log_file, LOG_FILE, LOG_LINE
 from hashlib import md5
-import os
-
-LOG_FILE = '/tmp/pytest_mock.log'
-LOG_LINE = '[Tue Dec 13 07:18:04.916767 2022] [mpm_prefork:notice] [pid 10848] AH00163: Apache/2.4.41 (Ubuntu) configured -- resuming normal operations'
-
-
-def create_log_file():
-    with open('/tmp/pytest_mock.log', 'w') as f:
-        for i in range(100):
-            line = f'{LOG_LINE} - {i+1}' + '\n'
-            f.write(line)
-
-
-def delete_log_file():
-    if os.path.isfile(LOG_FILE):
-        os.remove(LOG_FILE)
 
 
 def test_log_inspector_search_ok():
