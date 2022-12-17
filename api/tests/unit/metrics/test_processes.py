@@ -12,7 +12,7 @@ def test_processes_info():
     assert type(processes) is list
     assert len(processes) > 0
 
-    systemd_process = next(x for x in processes if x["name"] == 'python')
+    systemd_process = next(x for x in processes if x["name"] == 'pytest')
     assert systemd_process is not None
     assert 'pid' in systemd_process
     assert systemd_process['is_running'] is True
