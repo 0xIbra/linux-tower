@@ -1,4 +1,4 @@
-from wsgi import app
+from flask import current_app as app
 from endpoints import blueprint
 from flask import request, jsonify
 from simplepam import authenticate
@@ -25,4 +25,4 @@ def authentication_endpoint():
     }
     access_token = jwt.encode(payload, app.config['SECRET_KEY'], 'HS256')
 
-    return jsonify({'access_token': access_token.decode('utf8')})
+    return jsonify({'access_token': access_token})
