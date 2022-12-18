@@ -41,6 +41,12 @@ jobs:
       - name: create symlinks
         run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 python3 /usr/local/climate/symlinker.py --mock-map-file=/usr/local/climate/cli_mock_map.json --mock-dir=/usr/local/climate
 
+      - name: create linuxtower user
+        run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 useradd -ms /bin/bash linuxtower
+
+      - name: add password to linuxtower user
+        run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 echo 'linuxtower:linuxtower' | chpasswd
+
       - name: run tests
         run: docker-compose -f api/docker-compose.ci.yml exec -T python3.8 pytest tests -p no:warnings --cov=./ --cov-report=xml
 
