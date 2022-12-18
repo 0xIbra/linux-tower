@@ -94,8 +94,6 @@ def update_alert_endpoint(id):
         alert.regex = data['regex']
     if 'logfile_path' in data:
         alert.logfile_path = data['logfile_path']
-    if 'logfile_path' in data:
-        alert.logfile_path = data['logfile_path']
 
     if 'service_name' in data:
         alert.service_name = data['service_name']
