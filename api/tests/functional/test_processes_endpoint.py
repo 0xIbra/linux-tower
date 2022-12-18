@@ -7,7 +7,7 @@ def test_processes_endpoint(testing_app, access_token):
 
     with testing_app.test_client() as client:
         headers = {'Authorization': access_token}
-        response = client.get('/api/processes', headers=headers)
+        response = client.get('/api/processes?cpu_usage=true', headers=headers)
         content = response.get_json()
 
         assert response.status_code == 200
