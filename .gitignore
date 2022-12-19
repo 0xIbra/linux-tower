@@ -3,3 +3,9 @@ api/venv
 __pycache__
 api/test.py
 instance/
+
+# ui
+ui/.idea/
+ui/.vscode/
+ui/node_modules/
+dark-admin-2-0/
