@@ -26,6 +26,10 @@ export default {
       const authStore: any = useAuthStore();
       let data = await authStore.login(this.username, this.password);
 
+      if (data === true) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
       this.loading = false;
 
       if (data.error === true) {

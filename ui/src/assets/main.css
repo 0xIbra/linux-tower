@@ -42,3 +42,32 @@
     }
 }
 /* BUTTON SPINNER */
+
+
+/* COLORS */
+
+.text-color-primary {
+    color: var(--text-primary) !important;
+}
+
+.bg-color-primary {
+    background: var(--text-primary) !important;
+}
+
+.text-color-warning {
+    color: var(--bs-warning) !important;
+}
+
+.bg-color-warning {
+    background: var(--bs-warning) !important;
+}
+
+.text-color-danger {
+    color: var(--bs-danger) !important;
+}
+
+.bg-color-danger {
+    background: var(--bs-danger) !important;
+}
+
+/* COLORS */
