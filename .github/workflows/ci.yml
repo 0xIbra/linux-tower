@@ -1,7 +1,9 @@
-name: CI
+name: API - CI
 
 on:
   push:
+    paths:
+      - api/**
     branches:
       - master
       - "*"
