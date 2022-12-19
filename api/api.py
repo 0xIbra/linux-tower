@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 import logging
 import secrets
 
@@ -9,6 +10,7 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///linuxtower.db'
     app.config['SECRET_KEY'] = secrets.token_hex(16)
     db.init_app(app)
