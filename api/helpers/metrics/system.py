@@ -5,7 +5,7 @@ import os
 
 def system_metrics():
     payload = {
-        'cpu_usage': psutil.cpu_percent(),
+        'cpu_usage': psutil.cpu_percent(4),
     }
 
     mem_stats = psutil.virtual_memory()
