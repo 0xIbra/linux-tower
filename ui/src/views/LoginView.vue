@@ -7,6 +7,7 @@ export default {
       username: "",
       password: "",
       errorMessage: "",
+      loading: false,
     };
   },
 
@@ -20,9 +21,13 @@ export default {
 
   methods: {
     async login(submitEvent: any) {
+      this.loading = true;
       submitEvent.preventDefault();
       const authStore: any = useAuthStore();
       let data = await authStore.login(this.username, this.password);
+
+      this.loading = false;
+
       if (data.error === true) {
         this.errorMessage = data.detail;
       }
@@ -68,7 +73,9 @@ export default {
                     <br>
                   </div>
 
-                  <button class="btn btn-primary mb-3" id="login" type="submit">Login</button>
+                  <button class="btn btn-primary mb-3 button" v-bind:class="(loading)?'button--loading':''" id="login" type="submit">
+                    <span class="button__text">Login</span>
+                  </button>
                   <br>
                 </form>
               </div>
