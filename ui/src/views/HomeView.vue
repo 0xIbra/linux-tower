@@ -1,18 +1,23 @@
 <script lang="ts">
 import { useMetricsStore } from "@/stores/metrics";
+import { useProgramsStore } from "@/stores/programs";
 
 export default {
   data() {
     const metricsStore = useMetricsStore();
+    const programsStore = useProgramsStore();
 
     return {
       metricsStore,
+      programsStore,
       metrics: metricsStore.metrics,
       refreshInterval: null,
     };
   },
 
   async mounted() {
+    await this.programsStore.init();
+
     await this.refreshMetrics();
 
     this.refreshInterval = setInterval(() => {
@@ -72,7 +77,7 @@ export default {
                   <p class="text-xxl lh-1 mb-0" :class="getMetricTextColorClass(metrics.cpu_usage)" >{{ metrics.cpu_usage }}%</p>
                 </div>
                 <div class="progress" style="height: 3px">
-                  <div class="progress-bar" :class="getMetricBgColorClass(metrics.cpu_usage)" role="progressbar" :style="{width: parseInt(metrics.cpu_usage).toString() + '%'}" :aria-valuenow="parseInt(metrics.cpu_usage).toString()" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar" :class="getMetricBgColorClass(metrics.cpu_usage)" role="progressbar" :style="{width: Math.ceil(metrics.cpu_usage).toString() + '%'}" :aria-valuenow="parseInt(metrics.cpu_usage).toString()" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
             </div>

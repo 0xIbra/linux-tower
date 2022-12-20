@@ -26,6 +26,9 @@ export const useAuthStore = defineStore("auth", {
           headers,
         });
 
+        // authentication happens very fast, waiting 1 second for ux purpose
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         this.accessToken = response.data["access_token"];
         if (this.accessToken != null) {
           localStorage.setItem("access_token", this.accessToken);
