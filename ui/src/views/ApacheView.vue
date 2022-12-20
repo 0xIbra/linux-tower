@@ -11,6 +11,35 @@ export default {
       programsStore,
       apache: null,
       apacheState: null,
+      testArray: [
+        { line: 1, log: 'log1' },
+        { line: 2, log: 'log2' },
+        { line: 3, log: 'log3' },
+        { line: 4, log: 'log4' },
+        { line: 5, log: 'log5' },
+        { line: 6, log: 'log6' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+        { line: 7, log: 'log7' },
+      ],
     };
   },
 
@@ -30,29 +59,48 @@ export default {
       </div>
     </div>
 
-    <section>
+    <section v-if="programsStore.apache != null">
       <div class="container-fluid">
         <div class="row gy-4">
-          <div class="col-md-3 col-sm-6">
-            <div class="cpu-usage-wrapper card mb-0">
-              <div class="card-body">
-                <p class="text-xxl lh-1 mb-0" :class="{'text-color-primary': apacheState === 'running', 'text-color-danger': apacheState !== 'running'}">
-                  {{ programsStore.apache.details.state }}
-                </p>
-                <div class="me-2">
-                  <p class="text-sm text-gray-600 mt-2 mb-0">Since {{ programsStore.apache.details.started_at }}</p>
+          <div class="col-md-4 col-sm-6">
+            <div class="row gy-4">
+              <div class="col-md-12">
+                <div class="cpu-usage-wrapper card mb-0">
+                  <div class="card-body">
+                    <p class="text-xxl lh-1 mb-0" :class="{'text-color-primary': programsStore.apache.details.state === 'running', 'text-color-danger': apacheState !== 'running'}">
+                      {{ programsStore.apache.details.state }}
+                    </p>
+                    <div class="me-2">
+                      <p class="text-sm text-gray-600 mt-2 mb-0">Since {{ programsStore.apache.details.started_at }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <div class="cpu-usage-wrapper card mb-0">
+                  <div class="card-body">
+                    <div class="me-2 mb-2">
+                      <p class="text-sm text-gray-600 mt-2 mb-0">Status logs:</p>
+                    </div>
+                    <Logs v-if="apache != null" :raw-logs="programsStore.apache.status" :display-lines="false" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="col-md-8 col-sm-6">
-            <div class="cpu-usage-wrapper card mb-0">
-              <div class="card-body">
-                <div class="me-2 mb-2">
-                  <p class="text-sm text-gray-600 mt-2 mb-0">Status logs:</p>
+          <div class="col-md-7">
+            <div class="row gy-4">
+              <div class="col-12">
+                <div class="cpu-usage-wrapper card mb-0">
+                  <div class="card-body">
+                    <div class="me-2 mb-2">
+                      <p class="text-sm text-gray-600 mt-2 mb-0">Logs:</p>
+                    </div>
+                    <Logs v-if="apache != null"  :array-logs="testArray" :display-lines="false" />
+                  </div>
                 </div>
-                <Logs v-if="apache != null" :raw-logs="apache.status" :display-lines="false" />
               </div>
             </div>
           </div>

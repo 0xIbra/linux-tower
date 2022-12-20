@@ -36,10 +36,10 @@ const programsUpdateInterval = setInterval(async () => {
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
             <use xlink:href="#real-estate-1"></use>
           </svg>
-          <span>General</span>
+          <span>Dashboard</span>
         </router-link>
       </li>
-      <li v-if="programsStore.apache != null" class="sidebar-item">
+      <li v-if="programsStore.apache != null" class="sidebar-item" :class="{active: $route.name === 'apache'}">
         <router-link class="sidebar-link" to="/apache">
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
             <use xlink:href="#portfolio-grid-1"></use>
@@ -47,7 +47,7 @@ const programsUpdateInterval = setInterval(async () => {
           <span>Apache</span>
         </router-link>
       </li>
-      <li v-if="programsStore.nginx != null" class="sidebar-item">
+      <li v-if="programsStore.nginx != null" class="sidebar-item" :class="{active: $route.name === 'nginx'}">
         <a class="sidebar-link" href="charts.html">
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
             <use xlink:href="#sales-up-1"></use>
