@@ -4891,7 +4891,7 @@ fieldset:disabled .btn {
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #2d3035;
+  background-color: #22252a;
   background-clip: border-box;
   border: 0 solid rgba(0, 0, 0, 0.125);
   border-radius: 0;
@@ -11576,8 +11576,9 @@ pre {
   position: relative;
   min-height: 100vh;
   width: 100%;
+  background: #181a1b;
   /*padding-bottom: 70px;*/
-  background: #22252a;
+  /*background: #22252a;*/
 }
 
 i[class*="svg-"] {
@@ -11799,7 +11800,7 @@ nav.navbar .menu-large {
 * ==========================================================
 */
 nav#sidebar {
-  background: #2d3035;
+  background: #22252a;
   min-width: 280px;
   max-width: 280px;
   color: #85888e;
@@ -13336,7 +13337,7 @@ a.text-hover-dark:focus, a.text-hover-dark:hover {
 }
 
 .bg-dash-dark-2 {
-  background: #2d3035 !important;
+  background: #22252a !important;
 }
 
 .text-dash-dark-2 {

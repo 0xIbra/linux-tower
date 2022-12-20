@@ -1,7 +1,9 @@
 <script lang="ts">
 import { useProgramsStore } from "@/stores/programs";
+import Logs from "@/components/Logs.vue";
 
 export default {
+  components: {Logs},
   data() {
     const programsStore = useProgramsStore();
 
@@ -44,10 +46,13 @@ export default {
             </div>
           </div>
 
-          <div class="col-md-8 offset-1 col-sm-6">
+          <div class="col-md-8 col-sm-6">
             <div class="cpu-usage-wrapper card mb-0">
               <div class="card-body">
-                {{ apache.status }}
+                <div class="me-2 mb-2">
+                  <p class="text-sm text-gray-600 mt-2 mb-0">Status logs:</p>
+                </div>
+                <Logs v-if="apache != null" :raw-logs="apache.status" :display-lines="false" />
               </div>
             </div>
           </div>
