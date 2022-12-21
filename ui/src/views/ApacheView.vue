@@ -11,35 +11,6 @@ export default {
       programsStore,
       apache: null,
       apacheState: null,
-      testArray: [
-        { line: 1, log: 'log1' },
-        { line: 2, log: 'log2' },
-        { line: 3, log: 'log3' },
-        { line: 4, log: 'log4' },
-        { line: 5, log: 'log5' },
-        { line: 6, log: 'log6' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-        { line: 7, log: 'log7' },
-      ],
     };
   },
 
@@ -90,7 +61,7 @@ export default {
             </div>
           </div>
 
-          <div class="col-md-7">
+          <div class="col-md-6">
             <div class="row gy-4">
               <div class="col-12">
                 <div class="cpu-usage-wrapper card mb-0">
@@ -98,7 +69,7 @@ export default {
                     <div class="me-2 mb-2">
                       <p class="text-sm text-gray-600 mt-2 mb-0">Logs:</p>
                     </div>
-                    <Logs v-if="apache != null"  :array-logs="testArray" :display-lines="false" />
+                    <Logs v-if="apache != null" logs-endpoint="/api/logs/tail?log_file=/var/log/syslog" :display-lines="true" />
                   </div>
                 </div>
               </div>
