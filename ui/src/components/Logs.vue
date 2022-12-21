@@ -21,6 +21,9 @@ const startLine = ref();
 const endLine = ref();
 const renderedLogs = ref("");
 
+const previousLogsLabel = ref("Previous logs");
+const newerLogsLabel = ref("Newer logs");
+
 const authStore = useAuthStore();
 
 function render() {
@@ -77,10 +80,51 @@ async function getPreviousLogs() {
     });
 
     let logs = response.data["logs"];
-    logsArray.value = logs.concat(logsArray.value);
+    if (Array.isArray(logs) && logs.length > 0) {
+      logsArray.value = logs.concat(logsArray.value);
+      startLine.value = startLineTemp;
+      render();
+    } else {
+      previousLogsLabel.value = "No older logs...";
 
-    startLine.value = startLineTemp;
-    render();
+      setTimeout(() => {
+        previousLogsLabel.value = "Previous logs";
+      }, 3000);
+    }
+  } catch (e) {
+    // todo
+  }
+}
+
+async function getNewerLogs() {
+  try {
+    let startLineTemp = endLine.value;
+    let endLineTemp = startLineTemp + 50;
+
+    const url = props.logsEndpoint + `&start_line=${startLineTemp}&end_line=${endLineTemp}`;
+    const response: any = await axios.request({
+      method: "GET",
+      baseURL: config.apiBaseEndpoint,
+      url,
+      headers: { Authorization: authStore.accessToken },
+    });
+
+    let logs = response.data["logs"];
+    if (Array.isArray(logs) && logs.length > 0) {
+      if (logsArray.value == null) {
+        logsArray.value = [];
+      }
+
+      logsArray.value = logsArray.value.concat(logs);
+      endLine.value = endLineTemp;
+      render();
+    } else {
+      newerLogsLabel.value = "No new logs...";
+
+      setTimeout(() => {
+        newerLogsLabel.value = "Newer logs";
+      }, 3000);
+    }
   } catch (e) {
     // todo
   }
@@ -93,15 +137,17 @@ onMounted(() => {
 
 <template>
   <div v-if="renderedLogs != null" id="code-wrap" :style="{ background: defaultBgColor }">
-    <div v-if="logsEndpoint != null" id="previous-logs" @click="getPreviousLogs()">Previous logs</div>
-    <pre><code>{{ renderedLogs }}</code></pre>
+    <div v-if="logsEndpoint != null && renderedLogs != ''" id="previous-logs" class="logs-btn" @click="getPreviousLogs()">{{ previousLogsLabel }}</div>
+    <pre v-if="renderedLogs != ''"><code>{{ renderedLogs }}</code></pre>
+    <pre v-if="renderedLogs == null || renderedLogs == ''"><code>no logs found</code></pre>
+    <div v-if="logsEndpoint != null && renderedLogs != ''" id="newer-logs" class="logs-btn" @click="getNewerLogs()">{{ newerLogsLabel }}</div>
   </div>
 </template>
 
 <style scoped>
 #code-wrap {
   width: 100%;
-  padding: 10px 10px;
+  padding: 5px 10px;
   border-radius: 8px;
   box-shadow: 0px 0px 17px -10px #111;
   margin-bottom: 0 !important;
@@ -113,16 +159,26 @@ onMounted(() => {
   margin-bottom: 0 !important;
 }
 
-#code-wrap #previous-logs {
+#code-wrap .logs-btn {
   text-align: center;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   cursor: pointer;
   background: #24282e;
-  padding: 2px 0;
-  font-size: 14px;
+  padding: 5px 0;
+  font-size: 13px;
+  line-height: 1;
+  border-radius: 20px;
 }
 
-#code-wrap #previous-logs:hover {
+#code-wrap .logs-btn:hover {
   background: #353b45;
+}
+
+#code-wrap #newer-logs {
+  margin-top: 5px;
 }
 
 /* width */
