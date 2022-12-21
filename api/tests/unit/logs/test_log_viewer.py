@@ -119,11 +119,11 @@ def test_read():
     create_log_file()
 
     viewer = LogViewer(LOG_FILE)
-    lines = viewer.read(0, 9)
+    lines, from_line, to_line = viewer.read(0, 9)
 
     expected = []
     for i in range(1, 11):
-        expected.append(f'{LOG_LINE} - {i}')
+        expected.append({'line': i, 'log': f'{LOG_LINE} - {i}'})
 
     assert type(lines) is list
     assert len(lines) == 10
@@ -131,20 +131,20 @@ def test_read():
 
     # starting from line 39, reading until line 53 (starting from index 0)
     # should return exactly 15 lines in total
-    lines = viewer.read(39, 53)
+    lines, from_line, to_line = viewer.read(39, 53)
     expected = []
     for i in range(40, 55):
-        expected.append(f'{LOG_LINE} - {i}')
+        expected.append({'line': i, 'log': f'{LOG_LINE} - {i}'})
 
     assert type(lines) is list
     assert len(lines) == 15
     assert lines == expected
 
     # should return last 2 lines
-    lines = viewer.read(98, 110)
+    lines, from_line, to_line = viewer.read(98, 110)
     expected = []
     for i in range(99, 101):
-        expected.append(f'{LOG_LINE} - {i}')
+        expected.append({'line': i, 'log': f'{LOG_LINE} - {i}'})
 
     assert len(lines) == 2
     assert lines == expected

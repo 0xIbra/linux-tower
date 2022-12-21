@@ -13,7 +13,7 @@ def test_logs_reader_endpoint(testing_app, access_token):
         assert response.status_code == 200
         assert type(content) is dict
         assert 'logs' in content
-        assert len(content['logs']) == 25
+        assert len(content['logs']) == 50 # 50 = default value
 
 
 def test_logs_reader_endpoint_with_limit_10(testing_app, access_token):

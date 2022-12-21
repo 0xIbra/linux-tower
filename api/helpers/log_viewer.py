@@ -83,15 +83,32 @@ class LogViewer:
 
         return logs
 
-    def read(self, from_line, to_line):
+    def read(self, from_line=None, to_line=None, lines=50):
         logs = []
+        if from_line is None and to_line is None:
+            line_count = LogViewer.count_lines_in_file(self.__log_file)
+            from_line = line_count - lines
+            to_line = line_count
+
         fp = open(self.__log_file)
         for i, line in enumerate(fp):
             if from_line <= i <= to_line:
-                logs.append(line.strip())
+                logs.append({'line': (i+1), 'log': line.strip()})
         fp.close()
 
-        return logs
+        return logs, from_line, to_line
+
+    @staticmethod
+    def count_lines_in_file(filename):
+        def _make_gen(reader):
+            while True:
+                b = reader(2 ** 16)
+                if not b: break
+                yield b
+
+        with open(filename, "rb") as f:
+            count = sum(buf.count(b"\n") for buf in _make_gen(f.raw.read))
+        return count
 
     @staticmethod
     def read_lines_reverse(f):
