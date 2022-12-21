@@ -75,9 +75,10 @@ export const useAuthStore = defineStore("auth", {
     },
 
     reset() {
-      localStorage.clear();
-      this.accessToken = null;
-      router.push("/login");
+      router.push("/login").then(() => {
+        localStorage.clear();
+        this.accessToken = null;
+      });
     },
   },
 });
