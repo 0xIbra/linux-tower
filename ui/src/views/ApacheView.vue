@@ -1,25 +1,19 @@
-<script lang="ts">
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
 import { useProgramsStore } from "@/stores/programs";
 import Logs from "@/components/Logs.vue";
 
-export default {
-  components: {Logs},
-  data() {
-    const programsStore = useProgramsStore();
+const programsStore = useProgramsStore();
+const apache = ref();
+const apacheState = ref();
 
-    return {
-      programsStore,
-      apache: null,
-      apacheState: null,
-    };
-  },
-
-  async mounted() {
-    await this.programsStore.getApache();
-    this.apache = this.programsStore.apache;
-    this.apacheState = this.programsStore.apache.details.state;
-  },
-};
+onMounted(async () => {
+  await programsStore.getApache();
+  if (programsStore.apache != null && programsStore.apache.details != null) {
+    apache.value = programsStore.apache;
+    apacheState.value = programsStore.apache.details.state;
+  }
+});
 </script>
 
 <template>

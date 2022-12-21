@@ -1,58 +1,51 @@
-<script lang="ts">
+<script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useMetricsStore } from "@/stores/metrics";
 import { useProgramsStore } from "@/stores/programs";
 
-export default {
-  data() {
-    const metricsStore = useMetricsStore();
-    const programsStore = useProgramsStore();
+const metricsStore = useMetricsStore();
+const programsStore = useProgramsStore();
 
-    return {
-      metricsStore,
-      programsStore,
-      metrics: metricsStore.metrics,
-      refreshInterval: null,
-    };
-  },
+const metrics = ref(metricsStore.metrics);
+const refreshInterval = ref();
 
-  async mounted() {
-    await this.programsStore.init();
+async function refreshMetrics() {
+  metrics.value = await metricsStore.getMetrics();
+}
 
-    await this.refreshMetrics();
+function getMetricTextColorClass(metricValue: any) {
+  if (metricValue >= 80) {
+    return "text-color-danger";
+  }
+  if (metricValue > 50) {
+    return "text-color-warning";
+  }
 
-    this.refreshInterval = setInterval(() => {
-      this.refreshMetrics()
-          .catch(e => console.error(e));
-    }, 5000);
-  },
+  return "text-color-primary";
+}
 
-  methods: {
-    async refreshMetrics() {
-      this.metrics = await this.metricsStore.getMetrics();
-    },
+function getMetricBgColorClass(metricValue: any) {
+  if (metricValue >= 80) {
+    return "bg-color-danger";
+  }
+  if (metricValue > 50) {
+    return "bg-color-warning";
+  }
 
-    getMetricTextColorClass(metricValue: any) {
-      if (metricValue >= 80) {
-        return "text-color-danger";
-      }
-      if (metricValue > 50) {
-        return "text-color-warning";
-      }
+  return "bg-color-primary";
+}
 
-      return "text-color-primary";
-    },
-    getMetricBgColorClass(metricValue: any) {
-      if (metricValue >= 80) {
-        return "bg-color-danger";
-      }
-      if (metricValue > 50) {
-        return "bg-color-warning";
-      }
+onMounted(async () => {
+  await programsStore.init();
+  await refreshMetrics();
+  refreshInterval.value = setInterval(() => {
+    refreshMetrics().catch((e) => console.error(e));
+  }, 5000);
+});
 
-      return "bg-color-primary";
-    },
-  },
-};
+onBeforeUnmount(() => {
+  clearInterval(refreshInterval.value);
+});
 </script>
 
 <template>

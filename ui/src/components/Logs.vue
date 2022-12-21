@@ -1,110 +1,94 @@
-<script lang="ts">
+<script setup lang="ts">
+import { ref, onMounted, defineProps } from "vue";
 import axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 import config from "../config";
 
-export default {
-  props: {
-    rawLogs: String,
-    arrayLogs: Array,
-    displayLines: Boolean,
-    defaultBgColor: {
-      type: String,
-      default: "#1b1e22",
-    },
-    logsEndpoint: String,
+const props = defineProps({
+  rawLogs: String,
+  arrayLogs: Array,
+  displayLines: Boolean,
+  defaultBgColor: {
+    type: String,
+    default: "#1b1e22",
   },
+  logsEndpoint: String,
+});
 
-  data() {
-    return {
-      textLogs: this.rawLogs,
-      logsArray: this.arrayLogs,
-      startLine: null,
-      endLine: null,
-      renderedLogs: null,
-    };
-  },
+const textLogs = ref(props.rawLogs);
+const logsArray = ref(props.arrayLogs);
+const startLine = ref();
+const endLine = ref();
+const renderedLogs = ref("");
 
-  async mounted() {
-    await this.getLogs();
-  },
+const authStore = useAuthStore();
 
-  methods: {
-    async getLogs() {
-      if (this.textLogs == null && this.logsArray == null) {
-        const authStore = useAuthStore();
-        try {
-          const response = await axios.request({
-            method: "GET",
-            baseURL: config.apiBaseEndpoint,
-            url: this.logsEndpoint,
-            headers: { Authorization: authStore.accessToken },
-          });
-
-          this.logsArray = response.data["logs"];
-          this.startLine = response.data["start_line"];
-          this.endLine = response.data["end_line"];
-        } catch (e) {
-          console.error(e);
-        }
+function render() {
+  if (textLogs.value != null) {
+    renderedLogs.value = textLogs.value;
+  } else if (logsArray.value != null && logsArray.value.length > 0) {
+    let tempLogArray = [];
+    const logsArrayTemp: Array<any> = logsArray.value;
+    for (let i = 0; i < logsArrayTemp.length; i++) {
+      let { line, log } = logsArrayTemp[i];
+      let insertLog = log;
+      if (props.displayLines) {
+        insertLog = `${line}: ${log}`;
       }
 
-      this.render();
-    },
+      tempLogArray[i] = insertLog;
+    }
+    renderedLogs.value = tempLogArray.join("\r\n");
+  }
+}
 
-    render() {
-      // console.log(this.arrayLogs);
+async function getLogs() {
+  if (textLogs.value == null && logsArray.value == null) {
+    try {
+      const response = await axios.request({
+        method: "GET",
+        baseURL: config.apiBaseEndpoint,
+        url: props.logsEndpoint,
+        headers: { Authorization: authStore.accessToken },
+      });
 
-      if (this.textLogs != null) {
-        this.renderedLogs = this.textLogs;
-      } else if (this.logsArray != null && this.logsArray.length > 0) {
-        let tempLogArray = [];
-        for (let i = 0; i < this.logsArray.length; i++) {
-          let {line, log} = this.logsArray[i];
-          let insertLog = log;
-          if (this.displayLines) {
-            insertLog = `${line}: ${log}`
-          }
+      logsArray.value = response.data["logs"];
+      startLine.value = response.data["start_line"];
+      endLine.value = response.data["end_line"];
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
-          tempLogArray[i] = insertLog;
-        }
-        this.renderedLogs = tempLogArray.join("\r\n");
-      }
-    },
+  render();
+}
 
-    async getPreviousLogs() {
-      const authStore = useAuthStore();
-      try {
-        let startLine = this.startLine - 50;
-        let endLine = this.startLine;
+async function getPreviousLogs() {
+  try {
+    let startLineTemp = startLine.value - 50;
+    let endLineTemp = startLine.value;
 
-        const response: any = await axios.request({
-          method: "GET",
-          baseURL: config.apiBaseEndpoint,
-          url: this.logsEndpoint + `&start_line=${startLine}&end_line=${endLine}`,
-          headers: { Authorization: authStore.accessToken },
-        });
+    const url = props.logsEndpoint + `&start_line=${startLineTemp}&end_line=${endLineTemp}`;
+    const response: any = await axios.request({
+      method: "GET",
+      baseURL: config.apiBaseEndpoint,
+      url,
+      headers: { Authorization: authStore.accessToken },
+    });
 
-        let logs = response.data["logs"];
-        // for (let i = 0; i < logs.length; i++) {
-        //   let item = logs.length;
-        //   this.logsArray.unshift(item);
-        // }
+    let logs = response.data["logs"];
+    logsArray.value = logs.concat(logsArray.value);
 
-        this.logsArray = logs.concat(this.logsArray);
+    startLine.value = startLineTemp;
+    render();
+  } catch (e) {
+    // todo
+  }
+}
 
-        this.startLine = startLine;
-        this.render();
-      } catch (e) {
-        // todo
-      }
-    },
-
-    getNextLogs() {
-
-    },
-  },
-};
+onMounted(() => {
+  getLogs();
+});
 </script>
 
 <template>

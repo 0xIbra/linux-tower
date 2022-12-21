@@ -6,7 +6,7 @@ import { useAuthStore } from "@/stores/auth";
 export const useProgramsStore = defineStore({
   id: "programs",
   state: () => ({
-    apache: null,
+    apache: null as any,
     nginx: null,
     certbot: null,
   }),

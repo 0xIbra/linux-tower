@@ -1,43 +1,31 @@
-<script lang="ts">
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 
-export default {
-  data() {
-    return {
-      username: "",
-      password: "",
-      errorMessage: "",
-      loading: false,
-    };
-  },
+const username = ref("");
+const password = ref("");
+const errorMessage = ref("");
+const loading = ref(false);
 
-  mounted() {
-    const authStore: any = useAuthStore();
+const router = useRouter();
+const authStore: any = useAuthStore();
 
-    if (authStore.isAuthenticated()) {
-      this.$router.push("/");
-    }
-  },
+async function login(submitEvent: any) {
+  loading.value = true;
+  submitEvent.preventDefault();
+  const data = await authStore.login(username.value, password.value);
+  loading.value = false;
 
-  methods: {
-    async login(submitEvent: any) {
-      this.loading = true;
-      submitEvent.preventDefault();
-      const authStore: any = useAuthStore();
-      let data = await authStore.login(this.username, this.password);
+  if (data !== true && data.error === true) {
+    errorMessage.value = data.detail;
+  }
 
-      this.loading = false;
+  if (data === true && authStore.isAuthenticated()) {
+    await router.push("/");
+  }
 
-      if (data.error === true) {
-        this.errorMessage = data.detail;
-      }
-
-      if (data === true && authStore.isAuthenticated()) {
-        this.$router.push("/");
-      }
-    },
-  },
-};
+}
 </script>
 
 <template>
