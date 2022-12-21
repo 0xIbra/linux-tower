@@ -90,7 +90,7 @@ class LogViewer:
             from_line = line_count - lines
             to_line = line_count
 
-        fp = open(self.__log_file)
+        fp = open(self.__log_file, mode='r', encoding='utf8')
         for i, line in enumerate(fp):
             if from_line <= i <= to_line:
                 logs.append({'line': (i+1), 'log': line.strip()})
@@ -100,14 +100,8 @@ class LogViewer:
 
     @staticmethod
     def count_lines_in_file(filename):
-        def _make_gen(reader):
-            while True:
-                b = reader(2 ** 16)
-                if not b: break
-                yield b
-
-        with open(filename, "rb") as f:
-            count = sum(buf.count(b"\n") for buf in _make_gen(f.raw.read))
+        with open(filename, mode='r', encoding='utf8') as f:
+            count = sum(1 for _ in f)
         return count
 
     @staticmethod
