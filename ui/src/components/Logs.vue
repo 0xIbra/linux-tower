@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, defineProps } from "vue";
+import {
+  ref,
+  onMounted,
+  defineProps,
+  defineExpose,
+  getCurrentInstance,
+} from "vue";
 import axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 import config from "../config";
@@ -12,9 +18,9 @@ const props = defineProps({
     type: String,
     default: "#1b1e22",
   },
-  logsEndpoint: String,
 });
 
+const logsEndpoint = ref();
 const textLogs = ref(props.rawLogs);
 const logsArray = ref(props.arrayLogs);
 const startLine = ref();
@@ -46,19 +52,19 @@ function render() {
 }
 
 async function getLogs() {
-  if (textLogs.value == null && logsArray.value == null) {
+  if (textLogs.value == null && (logsArray.value == null || logsArray.value.length === 0) && logsEndpoint.value != null) {
     try {
       const response = await axios.request({
         method: "GET",
         baseURL: config.apiBaseEndpoint,
-        url: props.logsEndpoint,
+        url: logsEndpoint.value,
         headers: { Authorization: authStore.accessToken },
       });
 
       logsArray.value = response.data["logs"];
       startLine.value = response.data["start_line"];
       endLine.value = response.data["end_line"];
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
     }
   }
@@ -71,7 +77,7 @@ async function getPreviousLogs() {
     let startLineTemp = startLine.value - 50;
     let endLineTemp = startLine.value;
 
-    const url = props.logsEndpoint + `&start_line=${startLineTemp}&end_line=${endLineTemp}`;
+    const url = logsEndpoint.value + `&start_line=${startLineTemp}&end_line=${endLineTemp}`;
     const response: any = await axios.request({
       method: "GET",
       baseURL: config.apiBaseEndpoint,
@@ -101,7 +107,7 @@ async function getNewerLogs() {
     let startLineTemp = endLine.value;
     let endLineTemp = startLineTemp + 50;
 
-    const url = props.logsEndpoint + `&start_line=${startLineTemp}&end_line=${endLineTemp}`;
+    const url = logsEndpoint.value + `&start_line=${startLineTemp}&end_line=${endLineTemp}`;
     const response: any = await axios.request({
       method: "GET",
       baseURL: config.apiBaseEndpoint,
@@ -130,8 +136,25 @@ async function getNewerLogs() {
   }
 }
 
+async function reloadLogs() {
+  logsArray.value = [];
+  await getLogs();
+
+  const instance = getCurrentInstance();
+  instance?.proxy?.$forceUpdate();
+}
+
+function setEndpoint(endpoint: any) {
+  logsEndpoint.value = endpoint;
+}
+
 onMounted(() => {
   getLogs();
+});
+
+defineExpose({
+  reloadLogs,
+  setEndpoint,
 });
 </script>
 
@@ -157,6 +180,7 @@ onMounted(() => {
 #code-wrap > pre {
   max-height: 500px;
   margin-bottom: 0 !important;
+  margin-top: 10px;
 }
 
 #code-wrap .logs-btn {

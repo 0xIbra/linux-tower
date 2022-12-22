@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { getCurrentInstance, ref, onMounted } from "vue";
 import { useProgramsStore } from "@/stores/programs";
 import Logs from "@/components/Logs.vue";
 
 const programsStore = useProgramsStore();
 const apache = ref();
 const apacheState = ref();
+const selectedLogFile = ref("/var/log/apache2/error.log");
+
+const logsComponentRef = ref();
 
 onMounted(async () => {
   await programsStore.getApache();
@@ -13,7 +16,18 @@ onMounted(async () => {
     apache.value = programsStore.apache;
     apacheState.value = programsStore.apache.details.state;
   }
+
+  updateLogs();
 });
+
+const updateLogs = () => {
+  if (logsComponentRef.value != null) {
+    logsComponentRef.value.setEndpoint("/api/logs/tail?log_file=" + selectedLogFile.value);
+    logsComponentRef.value.reloadLogs();
+  }
+  const instance = getCurrentInstance();
+  instance?.proxy?.$forceUpdate();
+};
 </script>
 
 <template>
@@ -61,9 +75,13 @@ onMounted(async () => {
                 <div class="cpu-usage-wrapper card mb-0">
                   <div class="card-body">
                     <div class="me-2 mb-2">
-                      <p class="text-sm text-gray-600 mt-2 mb-0">Logs:</p>
+<!--                      <p class="text-sm text-gray-600 mt-2 mb-0">Logs:</p>-->
+                      <select v-model="selectedLogFile" @change="updateLogs()" class="form-select mb-3" name="account">
+                        <option selected value="/var/log/apache2/error.log">Error logs (/var/log/apache2/error.log)</option>
+                        <option value="/var/log/apache2/access.log">Access logs (/var/log/apache2/access.log)</option>
+                      </select>
                     </div>
-                    <Logs v-if="apache != null" logs-endpoint="/api/logs/tail?log_file=/var/log/syslog" :display-lines="true" />
+                    <Logs v-if="selectedLogFile != null" ref="logsComponentRef" :display-lines="true" />
                   </div>
                 </div>
               </div>

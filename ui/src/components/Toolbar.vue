@@ -45,22 +45,22 @@ const authStore = useAuthStore();
             </svg><span class="badge bg-dash-color-1">5</span></a>
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdownMenuLink1">
               <li><a class="dropdown-item d-flex align-items-center" href="#">
-                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-3.jpg" alt="Nadia Halsey">
+                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-6.jpg" alt="Nadia Halsey">
                   <div class="availability-status bg-success"></div>
                 </div>
                 <div class="ms-3">   <strong class="d-block">Nadia Halsey</strong><span class="d-block text-xs">lorem ipsum dolor sit amit</span><small class="d-block">9:30am</small></div></a></li>
               <li><a class="dropdown-item d-flex align-items-center" href="#">
-                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-2.jpg" alt="Peter Ramsy">
+                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-6.jpg" alt="Peter Ramsy">
                   <div class="availability-status bg-warning"></div>
                 </div>
                 <div class="ms-3">   <strong class="d-block">Nadia Halsey</strong><span class="d-block text-xs">lorem ipsum dolor sit amit</span><small class="d-block">9:30am</small></div></a></li>
               <li><a class="dropdown-item d-flex align-items-center" href="#">
-                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-1.jpg" alt="Sam Kaheil">
+                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-6.jpg" alt="Sam Kaheil">
                   <div class="availability-status bg-danger"></div>
                 </div>
                 <div class="ms-3">   <strong class="d-block">Nadia Halsey</strong><span class="d-block text-xs">lorem ipsum dolor sit amit</span><small class="d-block">9:30am</small></div></a></li>
               <li><a class="dropdown-item d-flex align-items-center" href="#">
-                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-5.jpg" alt="Sara Wood">
+                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-6.jpg" alt="Sara Wood">
                   <div class="availability-status bg-secondary"></div>
                 </div>
                 <div class="ms-3">   <strong class="d-block">Nadia Halsey</strong><span class="d-block text-xs">lorem ipsum dolor sit amit</span><small class="d-block">9:30am</small></div></a></li>
