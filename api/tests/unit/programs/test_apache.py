@@ -1,4 +1,5 @@
 from helpers.programs import Apache
+import pytest
 
 
 def test_is_installed():
@@ -52,16 +53,12 @@ def test_state_details():
     assert 'started_at' in state_details
 
 
-def test_metrics():
+def test_metrics_expect_exception():
     """
     GIVEN a 'Apache' class that groups together methods relevant to the Apache systemd service
     WHEN 'metrics' method is called
-    THEN check that the returned payload contains relevant info on system resource utilization
+    THEN expect exception
     """
 
-    metrics = Apache.metrics()
-    assert type(metrics) is dict
-    assert 'cpu_usage' in metrics
-    assert 'memory' in metrics
-    assert metrics['memory']['total'] > 0
-
+    with pytest.raises(Exception) as e:
+        Apache.metrics()
