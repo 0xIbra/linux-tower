@@ -7,7 +7,14 @@ export const useNginxStore = defineStore({
   id: "nginx",
   state: () => ({
     data: null as any,
-    metrics: null as any,
+    metrics: {
+      cpu_usage: 0.0,
+      memory: {
+        total: 0,
+        used: 0,
+        percent: 0,
+      },
+    },
   }),
 
   actions: {
@@ -29,6 +36,29 @@ export const useNginxStore = defineStore({
         }
 
         this.data = null;
+      }
+    },
+
+    async getMetrics() {
+      const authStore = useAuthStore();
+
+      try {
+        const response = await axios.request({
+          method: "GET",
+          baseURL: config.apiBaseEndpoint,
+          url: "/api/nginx/metrics",
+          headers: { Authorization: authStore.accessToken },
+        });
+
+        this.metrics = response.data;
+        if (this.metrics.memory != null) {
+          const total = this.metrics.memory.total;
+          const used = this.metrics.memory.used;
+
+          this.metrics.memory.percent = (used / total) * 100;
+        }
+      } catch (e) {
+        // todo
       }
     },
   },

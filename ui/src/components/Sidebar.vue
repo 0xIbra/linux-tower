@@ -36,7 +36,7 @@ const programsUpdateInterval = setInterval(async () => {
       <li class="sidebar-item" :class="{active: $route.name === 'home'}">
         <router-link to="/" class="sidebar-link">
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
-            <use xlink:href="#real-estate-1"></use>
+            <use xlink:href="#imac-screen-1"></use>
           </svg>
           <span>Dashboard</span>
         </router-link>
@@ -44,18 +44,18 @@ const programsUpdateInterval = setInterval(async () => {
       <li v-if="apacheStore.data != null" class="sidebar-item" :class="{active: $route.name === 'apache'}">
         <router-link class="sidebar-link" to="/apache">
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
-            <use xlink:href="#portfolio-grid-1"></use>
+            <use xlink:href="#browser-window-1"></use>
           </svg>
           <span>Apache</span>
         </router-link>
       </li>
       <li v-if="nginxStore.data != null" class="sidebar-item" :class="{active: $route.name === 'nginx'}">
-        <a class="sidebar-link" href="charts.html">
+        <router-link class="sidebar-link" to="/nginx">
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
-            <use xlink:href="#sales-up-1"></use>
+            <use xlink:href="#browser-window-1"></use>
           </svg>
           <span>Nginx</span>
-        </a>
+        </router-link>
       </li>
       <li class="sidebar-item">
         <a class="sidebar-link" href="forms.html">

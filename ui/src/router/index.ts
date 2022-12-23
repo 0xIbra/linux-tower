@@ -22,6 +22,11 @@ const router = createRouter({
       name: "apache",
       component: () => import("../views/ApacheView.vue"),
     },
+    {
+      path: "/nginx",
+      name: "nginx",
+      component: () => import("../views/NginxView.vue"),
+    },
   ],
 });
 
