@@ -1,19 +1,21 @@
 <script setup lang="ts">
 import { useAuthStore } from "@/stores/auth";
-import { useProgramsStore } from "@/stores/programs";
+import { useApacheStore } from "@/stores/apache";
+import { useNginxStore } from "@/stores/nginx";
 
 const authStore = useAuthStore();
-const programsStore = useProgramsStore();
+const apacheStore = useApacheStore();
+const nginxStore = useNginxStore();
 
 if (authStore.accessToken != null) {
-  programsStore.getApache();
-  programsStore.getNginx();
+  apacheStore.init();
+  nginxStore.init();
 }
 
 const programsUpdateInterval = setInterval(async () => {
   if (authStore.accessToken != null) {
-    await programsStore.getApache();
-    await programsStore.getNginx();
+    await apacheStore.init();
+    await nginxStore.init();
   }
 }, 20000);
 </script>
@@ -39,7 +41,7 @@ const programsUpdateInterval = setInterval(async () => {
           <span>Dashboard</span>
         </router-link>
       </li>
-      <li v-if="programsStore.apache != null" class="sidebar-item" :class="{active: $route.name === 'apache'}">
+      <li v-if="apacheStore.data != null" class="sidebar-item" :class="{active: $route.name === 'apache'}">
         <router-link class="sidebar-link" to="/apache">
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
             <use xlink:href="#portfolio-grid-1"></use>
@@ -47,7 +49,7 @@ const programsUpdateInterval = setInterval(async () => {
           <span>Apache</span>
         </router-link>
       </li>
-      <li v-if="programsStore.nginx != null" class="sidebar-item" :class="{active: $route.name === 'nginx'}">
+      <li v-if="nginxStore.data != null" class="sidebar-item" :class="{active: $route.name === 'nginx'}">
         <a class="sidebar-link" href="charts.html">
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
             <use xlink:href="#sales-up-1"></use>

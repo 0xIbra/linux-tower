@@ -1,0 +1,35 @@
+import { defineStore } from "pinia";
+import axios from "axios";
+import config from "../config";
+import { useAuthStore } from "@/stores/auth";
+
+export const useNginxStore = defineStore({
+  id: "nginx",
+  state: () => ({
+    data: null as any,
+    metrics: null as any,
+  }),
+
+  actions: {
+    async init() {
+      const authStore = useAuthStore();
+
+      try {
+        const response = await axios.request({
+          method: "GET",
+          baseURL: config.apiBaseEndpoint,
+          url: "/api/nginx/status",
+          headers: { Authorization: authStore.accessToken },
+        });
+
+        this.data = response.data.data;
+      } catch (e: any) {
+        if (e.response.status !== 404) {
+          throw e;
+        }
+
+        this.data = null;
+      }
+    },
+  },
+});

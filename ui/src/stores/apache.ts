@@ -3,21 +3,22 @@ import axios from "axios";
 import config from "../config";
 import { useAuthStore } from "@/stores/auth";
 
-export const useProgramsStore = defineStore({
-  id: "programs",
+export const useApacheStore = defineStore({
+  id: "apache",
   state: () => ({
-    apache: null as any,
-    nginx: null,
-    certbot: null,
+    data: null as any,
+    metrics: {
+      cpu_usage: 0.0,
+      memory: {
+        total: 0,
+        used: 0,
+        percent: 0,
+      },
+    },
   }),
 
   actions: {
     async init() {
-      await this.getApache();
-      await this.getNginx();
-    },
-
-    async getApache() {
       const authStore = useAuthStore();
 
       try {
@@ -28,34 +29,36 @@ export const useProgramsStore = defineStore({
           headers: { Authorization: authStore.accessToken },
         });
 
-        this.apache = response.data.data;
+        this.data = response.data.data;
       } catch (e: any) {
         if (e.response.status !== 404) {
           throw e;
         }
 
-        this.apache = null;
+        this.data = null;
       }
     },
 
-    async getNginx() {
+    async getMetrics() {
       const authStore = useAuthStore();
 
       try {
         const response = await axios.request({
           method: "GET",
           baseURL: config.apiBaseEndpoint,
-          url: "/api/nginx/status",
+          url: "/api/apache/metrics",
           headers: { Authorization: authStore.accessToken },
         });
 
-        this.nginx = response.data;
-      } catch (e: any) {
-        if (e.response.status !== 404) {
-          throw e;
-        }
+        this.metrics = response.data;
+        if (this.metrics.memory != null) {
+          const total = this.metrics.memory.total;
+          const used = this.metrics.memory.used;
 
-        this.nginx = null;
+          this.metrics.memory.percent = (used / total) * 100;
+        }
+      } catch (e) {
+        // todo
       }
     },
   },

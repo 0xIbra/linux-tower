@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useMetricsStore } from "@/stores/metrics";
-import { useProgramsStore } from "@/stores/programs";
+import { useApacheStore } from "@/stores/apache";
+import { useNginxStore } from "@/stores/nginx";
+import { metricTextColorClass, metricBgColorClass } from "@/utils/dynamicClasses";
 
 const metricsStore = useMetricsStore();
-const programsStore = useProgramsStore();
+const apacheStore = useApacheStore();
+const nginxStore = useNginxStore();
 
 const metrics = ref(metricsStore.metrics);
 const refreshInterval = ref();
@@ -13,30 +16,9 @@ async function refreshMetrics() {
   metrics.value = await metricsStore.getMetrics();
 }
 
-function getMetricTextColorClass(metricValue: any) {
-  if (metricValue >= 80) {
-    return "text-color-danger";
-  }
-  if (metricValue > 50) {
-    return "text-color-warning";
-  }
-
-  return "text-color-primary";
-}
-
-function getMetricBgColorClass(metricValue: any) {
-  if (metricValue >= 80) {
-    return "bg-color-danger";
-  }
-  if (metricValue > 50) {
-    return "bg-color-warning";
-  }
-
-  return "bg-color-primary";
-}
-
 onMounted(async () => {
-  await programsStore.init();
+  await apacheStore.init();
+  await nginxStore.init();
   await refreshMetrics();
   refreshInterval.value = setInterval(() => {
     refreshMetrics().catch((e) => console.error(e));
@@ -67,10 +49,10 @@ onBeforeUnmount(() => {
                     <img class="svg-icon svg-icon-sm svg-icon-heavy text-gray-600 mb-2" src="icons/processor-32.png" />
                     <p class="text-sm text-uppercase text-gray-600 lh-1 mb-0">CPU Usage</p>
                   </div>
-                  <p class="text-xxl lh-1 mb-0" :class="getMetricTextColorClass(metrics.cpu_usage)" >{{ metrics.cpu_usage }}%</p>
+                  <p class="text-xxl lh-1 mb-0" :class="metricTextColorClass(metrics.cpu_usage)" >{{ metrics.cpu_usage }}%</p>
                 </div>
                 <div class="progress" style="height: 3px">
-                  <div class="progress-bar" :class="getMetricBgColorClass(metrics.cpu_usage)" role="progressbar" :style="{width: Math.ceil(metrics.cpu_usage).toString() + '%'}" :aria-valuenow="parseInt(metrics.cpu_usage).toString()" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar" :class="metricBgColorClass(metrics.cpu_usage)" role="progressbar" :style="{width: Math.ceil(metrics.cpu_usage).toString() + '%'}" :aria-valuenow="parseInt(metrics.cpu_usage).toString()" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
             </div>
@@ -85,10 +67,10 @@ onBeforeUnmount(() => {
                     </svg>
                     <p class="text-sm text-uppercase text-gray-600 lh-1 mb-0">Memory</p>
                   </div>
-                  <p class="text-xxl lh-1 mb-0" :class="getMetricTextColorClass(metrics.memory.percent)">{{ metrics.memory.percent }}%</p>
+                  <p class="text-xxl lh-1 mb-0" :class="metricTextColorClass(metrics.memory.percent)">{{ metrics.memory.percent }}%</p>
                 </div>
                 <div class="progress" style="height: 3px">
-                  <div class="progress-bar" :class="getMetricBgColorClass(metrics.memory.percent)" role="progressbar" :style="{width: parseInt(metrics.memory.percent).toString() + '%'}" :aria-valuenow="parseInt(metrics.memory.percent).toString()" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar" :class="metricBgColorClass(metrics.memory.percent)" role="progressbar" :style="{width: parseInt(metrics.memory.percent).toString() + '%'}" :aria-valuenow="parseInt(metrics.memory.percent).toString()" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
             </div>
@@ -101,10 +83,10 @@ onBeforeUnmount(() => {
                     <img class="svg-icon svg-icon-sm svg-icon-heavy text-gray-600 mb-2" src="icons/hard-drive.png" />
                     <p class="text-sm text-uppercase text-gray-600 lh-1 mb-0">Disk</p>
                   </div>
-                  <p class="text-xxl lh-1 mb-0" :class="getMetricTextColorClass(metrics.disk.percent)">{{ metrics.disk.percent }}%</p>
+                  <p class="text-xxl lh-1 mb-0" :class="metricTextColorClass(metrics.disk.percent)">{{ metrics.disk.percent }}%</p>
                 </div>
                 <div class="progress" style="height: 3px">
-                  <div class="progress-bar" :class="getMetricBgColorClass(metrics.disk.percent)" role="progressbar" :style="{width: parseInt(metrics.disk.percent).toString() + '%'}" :aria-valuenow="parseInt(metrics.disk.percent).toString()" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar" :class="metricBgColorClass(metrics.disk.percent)" role="progressbar" :style="{width: parseInt(metrics.disk.percent).toString() + '%'}" :aria-valuenow="parseInt(metrics.disk.percent).toString()" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
             </div>

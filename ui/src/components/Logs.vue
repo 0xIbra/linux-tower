@@ -137,6 +137,7 @@ async function getNewerLogs() {
 }
 
 async function reloadLogs() {
+  renderedLogs.value = "";
   logsArray.value = [];
   await getLogs();
 
