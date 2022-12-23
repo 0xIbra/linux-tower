@@ -5,6 +5,7 @@ from decorators import is_authenticated
 
 
 @blueprint.route('/api/logs/tail', methods=['GET'])
+@is_authenticated
 def logs_reader_endpoint():
     read_lines = request.args.get('lines')
     from_line = request.args.get('start_line')
