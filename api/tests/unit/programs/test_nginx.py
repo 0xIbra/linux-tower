@@ -1,5 +1,6 @@
 from helpers.programs import Nginx
-
+from exceptions import NginxNotRunning
+import pytest
 
 def test_is_installed():
     """
@@ -50,3 +51,17 @@ def test_state_details():
     assert type(state_details) is dict
     assert state_details['state'] == 'dead'
     assert 'started_at' not in state_details
+
+
+def test_metrics():
+    """
+    GIVEN a 'Nginx' class that groups together methods relevant to the Nginx systemd service
+    WHEN 'metrics' method is called
+    THEN check that the returned payload contains relevant info on system resource utilization
+    """
+
+    metrics = Nginx.metrics()
+    assert type(metrics) is dict
+    assert 'cpu_usage' in metrics
+    assert 'memory' in metrics
+    assert metrics['memory']['total'] > 0

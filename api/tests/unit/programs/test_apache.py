@@ -50,3 +50,18 @@ def test_state_details():
     assert 'description' in state_details
     assert state_details['state'] == 'running'
     assert 'started_at' in state_details
+
+
+def test_metrics():
+    """
+    GIVEN a 'Apache' class that groups together methods relevant to the Apache systemd service
+    WHEN 'metrics' method is called
+    THEN check that the returned payload contains relevant info on system resource utilization
+    """
+
+    metrics = Apache.metrics()
+    assert type(metrics) is dict
+    assert 'cpu_usage' in metrics
+    assert 'memory' in metrics
+    assert metrics['memory']['total'] > 0
+
