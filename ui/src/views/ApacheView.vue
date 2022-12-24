@@ -5,8 +5,6 @@ import Logs from "@/components/Logs.vue";
 import { metricTextColorClass, metricBgColorClass } from "@/utils/dynamicClasses";
 
 const apacheStore = useApacheStore();
-const apache = ref();
-const apacheState = ref();
 const selectedLogFile = ref("/var/log/apache2/error.log");
 
 const logsComponentRef = ref();
@@ -15,11 +13,6 @@ const refreshInterval = ref();
 
 onMounted(async () => {
   await apacheStore.init();
-  if (apacheStore.data != null && apacheStore.data.details != null) {
-    apache.value = apacheStore.data;
-    apacheState.value = apacheStore.data.details.state;
-  }
-
   updateLogs();
 
   await apacheStore.getMetrics();
@@ -58,7 +51,7 @@ const updateLogs = () => {
               <div class="col-md-12">
                 <div class="cpu-usage-wrapper card mb-0">
                   <div class="card-body">
-                    <p class="text-xxl lh-1 mb-0" :class="{'text-color-primary': apacheStore.data.details.state === 'running', 'text-color-danger': apacheState !== 'running'}">
+                    <p class="text-xxl lh-1 mb-0" :class="{'text-color-primary': apacheStore.data.details.state === 'running', 'text-color-danger': apacheStore.data.details.state !== 'running'}">
                       {{ apacheStore.data.details.state }}
                     </p>
                     <div class="me-2">
@@ -74,7 +67,7 @@ const updateLogs = () => {
                     <div class="me-2 mb-2">
                       <p class="text-sm text-gray-600 mt-2 mb-0">Status logs:</p>
                     </div>
-                    <Logs v-if="apache != null" :raw-logs="apacheStore.data.status" :display-lines="false" />
+                    <Logs v-if="apacheStore.data != null" :raw-logs="apacheStore.data.status" :display-lines="false" />
                   </div>
                 </div>
               </div>
