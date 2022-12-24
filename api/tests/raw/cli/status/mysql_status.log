@@ -1,0 +1,11 @@
+● mysql.service - MySQL Community Server
+     Loaded: loaded (/lib/systemd/system/mysql.service; enabled; vendor preset: enabled)
+     Active: active (running) since Tue 2022-11-08 12:31:39 CET; 1 months 16 days ago
+   Main PID: 2887717 (mysqld)
+     Status: "Server is operational"
+      Tasks: 47 (limit: 35162)
+     Memory: 1.7G
+     CGroup: /system.slice/mysql.service
+             └─2887717 /usr/sbin/mysqld
+
+Warning: journal has been rotated since unit was started, output may be incomplete.

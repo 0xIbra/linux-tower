@@ -11,6 +11,12 @@
       "output": {
         "file": "/opt/api/tests/raw/cli/status/nginx_status_404.log"
       }
+    },
+    {
+      "input": ["mysql", "status"],
+      "output": {
+        "file": "/opt/api/tests/raw/cli/status/mysql_status.log"
+      }
     }
   ],
 
@@ -25,6 +31,12 @@
       "input": ["show", "nginx", "--no-page"],
       "output": {
         "file": "/opt/api/tests/raw/cli/show/nginx_show_404.log"
+      }
+    },
+    {
+      "input": ["show", "mysql", "--no-page"],
+      "output": {
+        "file": "/opt/api/tests/raw/cli/show/mysql_show.log"
       }
     }
   ]
