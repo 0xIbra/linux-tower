@@ -2,7 +2,7 @@ from helpers.programs.nginx import Nginx
 from . import blueprint
 from flask import jsonify
 from decorators import is_authenticated
-from exceptions import NginxNotRunning
+from exceptions import ProcessNotFound
 
 
 @blueprint.route('/api/nginx/status', methods=['GET'])
@@ -31,7 +31,7 @@ def nginx_cpu_utilization_endpoint():
 
     try:
         metrics = Nginx.metrics()
-    except NginxNotRunning:
+    except ProcessNotFound:
         return jsonify({'detail': 'Nginx is not running.'}), 400
 
     return jsonify(metrics), 200

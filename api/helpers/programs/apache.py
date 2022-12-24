@@ -56,6 +56,6 @@ class Apache:
             'cpu_usage': apache_process.get_cpu_utilization(),
             'memory': {
                 'used': apache_process.get_memory_usage(),
-                'total': psutil.virtual_memory().total / 1024 / 1024
+                'total': total_mem
             }
         }
