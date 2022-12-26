@@ -1,5 +1,5 @@
 from api import create_app, db
-from entities import Alerts
+from entities import Alerts, CpuMetric, MemoryMetric, DiskMetric
 from datetime import datetime, timedelta
 import pytest
 import jwt
@@ -38,6 +38,25 @@ def add_alert():
 
     return _add_alert
 
+
+@pytest.fixture(scope='module')
+def add_metric_data():
+    """fixture to create metrics (CpuMetric, MemoryMetric, DiskMetric)"""
+
+    def _add_metric_data(metric_type: str, **args):
+        if metric_type == 'cpu':
+            metric = CpuMetric(**args)
+        elif metric_type == 'memory':
+            metric = MemoryMetric(**args)
+        else:
+            metric = DiskMetric(**args)
+
+        db.session.add(metric)
+        db.session.commit()
+
+        return metric
+
+    return _add_metric_data
 
 @pytest.fixture(scope='module')
 def access_token(testing_app):

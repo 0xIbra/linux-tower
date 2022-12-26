@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(id='alerting', func=alerting_task, args=[app], trigger=CronTrigger.from_crontab('*/5 * * * *'))
-    scheduler.add_job(id='metrics_collection', func=metrics_collection, args=[app], trigger=CronTrigger.from_crontab('* * * * *'))
+    scheduler.add_job(id='metrics_collection', func=metrics_collection, args=[app], trigger=CronTrigger.from_crontab('*/15 * * * *'))
     scheduler.start()
     atexit.register(lambda: scheduler.shutdown())
 
