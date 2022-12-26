@@ -6,6 +6,8 @@ import os
 
 
 class Nginx:
+    LABEL = 'nginx'
+    SYS_ID = 'nginx'
 
     @staticmethod
     def is_installed():
@@ -50,12 +52,15 @@ class Nginx:
         """
 
         nginx_process = Process(name='nginx')
+        used = nginx_process.get_memory_usage()
         total_mem = psutil.virtual_memory().total / 1024 / 1024
+        percent = (used / total_mem) * 100
 
         return {
             'cpu_usage': nginx_process.get_cpu_utilization(),
             'memory': {
-                'used': nginx_process.get_memory_usage(),
-                'total': total_mem
+                'used': used,
+                'total': total_mem,
+                'percent': percent
             }
         }

@@ -4,6 +4,8 @@ import psutil
 
 
 class MySQL:
+    LABEL = 'mysql'
+    SYS_ID = 'mysqld'
 
     @staticmethod
     def is_installed():
@@ -45,12 +47,15 @@ class MySQL:
         """
 
         apache_process = Process(name='mysqld')
+        used = apache_process.get_memory_usage()
         total_mem = psutil.virtual_memory().total / 1024 / 1024
+        percent = (used / total_mem) * 100
 
         return {
             'cpu_usage': apache_process.get_cpu_utilization(),
             'memory': {
-                'used': apache_process.get_memory_usage(),
-                'total': total_mem
+                'used': used,
+                'total': total_mem,
+                'percent': percent
             }
         }
