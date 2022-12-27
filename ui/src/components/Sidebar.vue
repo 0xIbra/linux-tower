@@ -50,7 +50,7 @@ const programsUpdateInterval = setInterval(async () => {
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
             <use xlink:href="#imac-screen-1"></use>
           </svg>
-          <span>Dashboard</span>
+          <span>Host</span>
         </router-link>
       </li>
       <li v-if="apacheStore.data != null" class="sidebar-item" :class="{active: $route.name === 'apache'}">
