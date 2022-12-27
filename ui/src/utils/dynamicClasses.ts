@@ -19,3 +19,19 @@ export const metricBgColorClass = (metricValue: Number) => {
 
   return "bg-color-primary";
 };
+
+export const stateTextColorClass = (state: String) => {
+  if (state === "running") {
+    return "text-color-primary";
+  }
+
+  return "text-color-danger";
+};
+
+export const stateBgColorClass = (state: String) => {
+  if (state === "running") {
+    return "bg-color-primary";
+  }
+
+  return "bg-color-danger";
+};

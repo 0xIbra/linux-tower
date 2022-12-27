@@ -7,6 +7,7 @@ export const useNginxStore = defineStore({
   id: "nginx",
   state: () => ({
     data: null as any,
+    installed: true,
     metrics: {
       cpu_usage: 0.0,
       memory: {
@@ -36,6 +37,7 @@ export const useNginxStore = defineStore({
         }
 
         this.data = null;
+        this.installed = false;
       }
     },
 
@@ -51,12 +53,6 @@ export const useNginxStore = defineStore({
         });
 
         this.metrics = response.data;
-        if (this.metrics.memory != null) {
-          const total = this.metrics.memory.total;
-          const used = this.metrics.memory.used;
-
-          this.metrics.memory.percent = (used / total) * 100;
-        }
       } catch (e) {
         // todo
       }

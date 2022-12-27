@@ -2,20 +2,32 @@
 import { useAuthStore } from "@/stores/auth";
 import { useApacheStore } from "@/stores/apache";
 import { useNginxStore } from "@/stores/nginx";
+import { useMysqlStore } from "@/stores/mysql";
 
 const authStore = useAuthStore();
 const apacheStore = useApacheStore();
 const nginxStore = useNginxStore();
+const mysqlStore = useMysqlStore();
 
 if (authStore.accessToken != null) {
   apacheStore.init();
   nginxStore.init();
+  mysqlStore.init();
 }
 
 const programsUpdateInterval = setInterval(async () => {
   if (authStore.accessToken != null) {
-    await apacheStore.init();
-    await nginxStore.init();
+    if (apacheStore.installed) {
+      await apacheStore.init();
+    }
+
+    if (nginxStore.installed) {
+      await nginxStore.init();
+    }
+
+    if (mysqlStore.installed) {
+      await mysqlStore.init();
+    }
   }
 }, 20000);
 </script>

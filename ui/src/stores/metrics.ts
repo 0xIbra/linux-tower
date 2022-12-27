@@ -6,6 +6,7 @@ import { useAuthStore } from "@/stores/auth";
 export const useMetricsStore = defineStore({
   id: "metrics",
   state: () => ({
+    authStore: useAuthStore(),
     metrics: {
       cpu_usage: 0,
       disk: {
@@ -29,17 +30,60 @@ export const useMetricsStore = defineStore({
 
   actions: {
     async getMetrics() {
-      const authStore = useAuthStore();
-
       const response = await axios.request({
         method: "GET",
         baseURL: config.apiBaseEndpoint,
         url: "/api/system_metrics",
-        headers: { Authorization: authStore.accessToken },
+        headers: { Authorization: this.authStore.accessToken },
       });
       this.metrics = response.data;
 
       return response.data;
+    },
+
+    async getCpuMetricsData() {
+      try {
+        const response = await axios.request({
+          method: "GET",
+          baseURL: config.apiBaseEndpoint,
+          url: "/api/metrics/cpu",
+          headers: { Authorization: this.authStore.accessToken },
+        });
+
+        return response.data;
+      } catch (e) {
+        // TODO
+      }
+    },
+
+    async getMemoryMetricsData() {
+      try {
+        const response = await axios.request({
+          method: "GET",
+          baseURL: config.apiBaseEndpoint,
+          url: "/api/metrics/memory",
+          headers: { Authorization: this.authStore.accessToken },
+        });
+
+        return response.data;
+      } catch (e) {
+        // TODO
+      }
+    },
+
+    async getDiskMetricsData() {
+      try {
+        const response = await axios.request({
+          method: "GET",
+          baseURL: config.apiBaseEndpoint,
+          url: "/api/metrics/disk",
+          headers: { Authorization: this.authStore.accessToken },
+        });
+
+        return response.data;
+      } catch (e) {
+        // TODO
+      }
     },
   },
 });
