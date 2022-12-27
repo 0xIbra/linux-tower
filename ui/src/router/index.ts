@@ -27,6 +27,11 @@ const router = createRouter({
       name: "nginx",
       component: () => import("../views/NginxView.vue"),
     },
+    {
+      path: "/mysql",
+      name: "mysql",
+      component: () => import("../views/MySQLView.vue"),
+    },
   ],
 });
 

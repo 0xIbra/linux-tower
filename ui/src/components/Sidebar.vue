@@ -57,6 +57,14 @@ const programsUpdateInterval = setInterval(async () => {
           <span>Nginx</span>
         </router-link>
       </li>
+      <li v-if="mysqlStore.data != null" class="sidebar-item" :class="{active: $route.name === 'mysql'}">
+        <router-link class="sidebar-link" to="/mysql">
+          <svg class="svg-icon svg-icon-sm svg-icon-heavy">
+            <use xlink:href="#paper-stack-1"></use>
+          </svg>
+          <span>MySQL</span>
+        </router-link>
+      </li>
       <li class="sidebar-item">
         <a class="sidebar-link" href="forms.html">
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
