@@ -19,7 +19,8 @@ def parse_since_param(since_param):
 @is_authenticated
 def get_cpu_metric_data():
     since = parse_since_param(request.args.get('since'))
-    metrics = db.session.query(CpuMetric).filter(CpuMetric.created_at >= since).all()
+    program = request.args.get('program')
+    metrics = db.session.query(CpuMetric).filter((CpuMetric.created_at >= since) & (CpuMetric.program == program)).all()
 
     return jsonify([x.to_json() for x in metrics])
 
@@ -28,7 +29,8 @@ def get_cpu_metric_data():
 @is_authenticated
 def get_memory_metric_data():
     since = parse_since_param(request.args.get('since'))
-    metrics = db.session.query(MemoryMetric).filter(MemoryMetric.created_at >= since).all()
+    program = request.args.get('program')
+    metrics = db.session.query(MemoryMetric).filter((MemoryMetric.created_at >= since) & (MemoryMetric.program == program)).all()
 
     return jsonify([x.to_json() for x in metrics])
 
