@@ -93,54 +93,6 @@ const programsUpdateInterval = setInterval(async () => {
           <span>Logs</span>
         </a>
       </li>
-      <li class="sidebar-item">
-        <a class="sidebar-link" href="#exampledropdownDropdown" data-bs-toggle="collapse">
-          <svg class="svg-icon svg-icon-sm svg-icon-heavy">
-            <use xlink:href="#browser-window-1"></use>
-          </svg>
-          <span>Example dropdown </span>
-        </a>
-        <ul class="collapse list-unstyled " id="exampledropdownDropdown">
-          <li><a class="sidebar-link" href="#">Page</a></li>
-          <li><a class="sidebar-link" href="#">Page</a></li>
-          <li><a class="sidebar-link" href="#">Page</a></li>
-        </ul>
-      </li>
-    </ul>
-    <span class="text-uppercase text-gray-600 text-xs mx-3 px-2 heading mb-2">Extras</span>
-    <ul class="list-unstyled">
-      <li class="sidebar-item">
-        <a class="sidebar-link" href="#">
-          <svg class="svg-icon svg-icon-sm svg-icon-heavy">
-            <use xlink:href="#imac-screen-1"></use>
-          </svg>
-          <span>Demo </span>
-        </a>
-      </li>
-      <li class="sidebar-item">
-        <a class="sidebar-link" href="#">
-          <svg class="svg-icon svg-icon-sm svg-icon-heavy">
-            <use xlink:href="#chart-1"></use>
-          </svg>
-          <span>Demo </span>
-        </a>
-      </li>
-      <li class="sidebar-item">
-        <a class="sidebar-link" href="#">
-          <svg class="svg-icon svg-icon-sm svg-icon-heavy">
-            <use xlink:href="#quality-1"></use>
-          </svg>
-          <span>Demo </span>
-        </a>
-      </li>
-      <li class="sidebar-item">
-        <a class="sidebar-link" href="#">
-          <svg class="svg-icon svg-icon-sm svg-icon-heavy">
-            <use xlink:href="#security-shield-1"></use>
-          </svg>
-          <span>Demo </span>
-        </a>
-      </li>
     </ul>
   </nav>
 </template>
