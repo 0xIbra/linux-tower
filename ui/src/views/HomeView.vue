@@ -33,7 +33,7 @@ onMounted(async () => {
   const labels = [];
   const cpuValues = [];
   for (let i = 0; i < cpuData.length; i++) {
-    labels.push(moment(cpuData[i]["created_at"]).utc().format("hh:mm"));
+    labels.push(moment(cpuData[i]["created_at"]).utc().format("HH:mm"));
     cpuValues.push(cpuData[i]["value"]);
   }
 
