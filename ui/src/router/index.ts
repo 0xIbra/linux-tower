@@ -32,6 +32,11 @@ const router = createRouter({
       name: "mysql",
       component: () => import("../views/MySQLView.vue"),
     },
+    {
+      path: "/alerts",
+      name: "alerts",
+      component: () => import("../views/AlertsView.vue"),
+    },
   ],
 });
 

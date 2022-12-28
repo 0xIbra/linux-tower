@@ -78,12 +78,12 @@ const programsUpdateInterval = setInterval(async () => {
         </router-link>
       </li>
       <li class="sidebar-item">
-        <a class="sidebar-link" href="forms.html">
+        <router-link class="sidebar-link" to="/alerts">
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
             <use xlink:href="#survey-1"></use>
           </svg>
           <span>Alerts</span>
-        </a>
+        </router-link>
       </li>
       <li class="sidebar-item">
         <a class="sidebar-link" href="login.html">

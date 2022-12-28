@@ -1,6 +1,14 @@
 @import './base.css';
 
 
+.flex {
+    display: flex !important;
+}
+
+.justify-content-space-between {
+    justify-content: space-between !important;
+}
+
 /* BUTTON SPINNER */
 .button {
     position: relative;
