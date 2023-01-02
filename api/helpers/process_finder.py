@@ -38,7 +38,6 @@ class Process:
 
         cpu_percentages = []
         cpu_utilization = 0
-        print(self.__process.children())
         children = self.__process.children()
         if len(children) > 0:
             for child_process in children:
