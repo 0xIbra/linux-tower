@@ -27,9 +27,16 @@ const authStore = useAuthStore();
         </div>
       </div>
       <div class="container-fluid d-flex align-items-center justify-content-between py-1">
-        <div class="navbar-header d-flex align-items-center"><a class="navbar-brand text-uppercase text-reset" href="index.html">
-          <div class="brand-text brand-big"><strong class="text-primary">Linux</strong><strong>Tower</strong></div>
-          <div class="brand-text brand-sm"><strong class="text-primary">L</strong><strong>T</strong></div></a>
+        <div class="navbar-header d-flex align-items-center">
+          <a class="navbar-brand text-uppercase text-reset" href="index.html">
+            <div id="brand-wrapper" class="brand-text brand-big">
+              <img src="public/img/linuxtower-logo-tr.png" alt="Linux Tower Logo" class="me-3">
+              <strong class="text-primary">Linux</strong><strong>Tower</strong>
+            </div>
+            <div class="brand-text brand-sm">
+              <img src="public/img/linuxtower-logo-tr.png" alt="Linux Tower Logo">
+            </div>
+          </a>
           <button class="sidebar-toggle">
             <svg class="svg-icon svg-icon-sm svg-icon-heavy transform-none">
               <use xlink:href="#arrow-left-1"> </use>
