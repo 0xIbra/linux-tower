@@ -2285,7 +2285,7 @@ progress {
 .form-control:focus {
   color: #8a8d93;
   background-color: #2d3035;
-  border-color: #db6574;
+  border-color: var(--text-primary);
   outline: 0;
   -webkit-box-shadow: none;
   box-shadow: none;
@@ -2585,15 +2585,15 @@ textarea.form-control-lg {
 }
 
 .form-check-input:focus {
-  border-color: #db6574;
+  border-color: var(--text-primary);
   outline: 0;
-  -webkit-box-shadow: 0 0 0 0.25rem rgba(219, 101, 116, 0.25);
-  box-shadow: 0 0 0 0.25rem rgba(219, 101, 116, 0.25);
+  -webkit-box-shadow: 0 0 0 0.25rem rgba(101, 219, 125, 0.25);
+  box-shadow: 0 0 0 0.25rem rgba(101, 219, 117, 0.25);
 }
 
 .form-check-input:checked {
-  background-color: #db6574;
-  border-color: #db6574;
+  background-color: var(--text-primary);
+  border-color: var(--text-primary);
 }
 
 .form-check-input:checked[type="checkbox"] {
@@ -4955,7 +4955,7 @@ fieldset:disabled .btn {
 .card-header {
   padding: 1.125rem 1.5rem;
   margin-bottom: 0;
-  background-color: #2d3035;
+  background-color: #22252a;
   border-bottom: 0 solid rgba(0, 0, 0, 0.125);
 }
 
@@ -4965,7 +4965,7 @@ fieldset:disabled .btn {
 
 .card-footer {
   padding: 1.125rem 1.5rem;
-  background-color: #2d3035;
+  background-color: #22252a;
   border-top: 0 solid rgba(0, 0, 0, 0.125);
 }
 
