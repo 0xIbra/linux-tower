@@ -11,32 +11,22 @@ const authStore = useAuthStore();
         <div class="search-inner d-flex align-items-center justify-content-center">
           <div class="close-btn d-flex align-items-center position-absolute top-0 end-0 me-4 mt-2 cursor-pointer"><span>Close </span>
             <svg class="svg-icon svg-icon-md svg-icon-heavy text-gray-700 mt-1">
-              <use xlink:href="#close-1"> </use>
+              <use xlink:href="#close-1"></use>
             </svg>
-          </div>
-          <div class="row w-100">
-            <div class="col-lg-8 mx-auto">
-              <form class="px-4" id="searchForm" action="#">
-                <div class="input-group position-relative flex-column flex-lg-row flex-nowrap">
-                  <input class="form-control shadow-0 bg-none px-0 w-100" type="search" name="search" placeholder="What are you searching for...">
-                  <button class="btn btn-link text-gray-600 px-0 text-decoration-none fw-bold cursor-pointer text-center" type="submit">Search</button>
-                </div>
-              </form>
-            </div>
           </div>
         </div>
       </div>
       <div class="container-fluid d-flex align-items-center justify-content-between py-1">
         <div class="navbar-header d-flex align-items-center">
-          <a class="navbar-brand text-uppercase text-reset" href="index.html">
+          <router-link class="navbar-brand text-uppercase text-reset" to="/">
             <div id="brand-wrapper" class="brand-text brand-big">
-              <img src="public/img/linuxtower-logo-tr.png" alt="Linux Tower Logo" class="me-3">
+              <img src="/img/linuxtower-logo-tr.png" alt="Linux Tower Logo" class="me-3">
               <strong class="text-primary">Linux</strong><strong>Tower</strong>
             </div>
             <div class="brand-text brand-sm">
-              <img src="public/img/linuxtower-logo-tr.png" alt="Linux Tower Logo">
+              <img src="/img/linuxtower-logo-tr.png" alt="Linux Tower Logo">
             </div>
-          </a>
+          </router-link>
           <button class="sidebar-toggle">
             <svg class="svg-icon svg-icon-sm svg-icon-heavy transform-none">
               <use xlink:href="#arrow-left-1"> </use>
@@ -52,22 +42,22 @@ const authStore = useAuthStore();
             </svg><span class="badge bg-dash-color-1">5</span></a>
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdownMenuLink1">
               <li><a class="dropdown-item d-flex align-items-center" href="#">
-                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-6.jpg" alt="Nadia Halsey">
+                <div class="position-relative"><img class="avatar avatar-md" src="/img/avatar-6.jpg" alt="Nadia Halsey">
                   <div class="availability-status bg-success"></div>
                 </div>
                 <div class="ms-3">   <strong class="d-block">Nadia Halsey</strong><span class="d-block text-xs">lorem ipsum dolor sit amit</span><small class="d-block">9:30am</small></div></a></li>
               <li><a class="dropdown-item d-flex align-items-center" href="#">
-                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-6.jpg" alt="Peter Ramsy">
+                <div class="position-relative"><img class="avatar avatar-md" src="/img/avatar-6.jpg" alt="Peter Ramsy">
                   <div class="availability-status bg-warning"></div>
                 </div>
                 <div class="ms-3">   <strong class="d-block">Nadia Halsey</strong><span class="d-block text-xs">lorem ipsum dolor sit amit</span><small class="d-block">9:30am</small></div></a></li>
               <li><a class="dropdown-item d-flex align-items-center" href="#">
-                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-6.jpg" alt="Sam Kaheil">
+                <div class="position-relative"><img class="avatar avatar-md" src="/img/avatar-6.jpg" alt="Sam Kaheil">
                   <div class="availability-status bg-danger"></div>
                 </div>
                 <div class="ms-3">   <strong class="d-block">Nadia Halsey</strong><span class="d-block text-xs">lorem ipsum dolor sit amit</span><small class="d-block">9:30am</small></div></a></li>
               <li><a class="dropdown-item d-flex align-items-center" href="#">
-                <div class="position-relative"><img class="avatar avatar-md" src="img/avatar-6.jpg" alt="Sara Wood">
+                <div class="position-relative"><img class="avatar avatar-md" src="/img/avatar-6.jpg" alt="Sara Wood">
                   <div class="availability-status bg-secondary"></div>
                 </div>
                 <div class="ms-3">   <strong class="d-block">Nadia Halsey</strong><span class="d-block text-xs">lorem ipsum dolor sit amit</span><small class="d-block">9:30am</small></div></a></li>

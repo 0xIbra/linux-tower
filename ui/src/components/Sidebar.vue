@@ -37,7 +37,7 @@ const programsUpdateInterval = setInterval(async () => {
   <nav v-if="authStore.isAuthenticated()" id="sidebar">
     <!-- Sidebar Header-->
     <div class="sidebar-header d-flex align-items-center p-4"><img class="avatar shadow-0 img-fluid rounded-circle"
-        src="img/avatar-6.jpg" alt="...">
+        src="/img/avatar-6.jpg" alt="...">
       <div class="ms-3 title">
         <h1 class="h5 mb-1">ibra</h1>
         <p class="text-sm text-gray-700 mb-0 lh-1">Linux user</p>
