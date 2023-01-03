@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCurrentInstance, ref, onMounted, onBeforeUnmount } from "vue";
+import { onMounted } from "vue";
 import { useAlertsStore } from "@/stores/alerts";
 
 const alertsStore = useAlertsStore();
@@ -9,9 +9,9 @@ onMounted(async () => {
 });
 
 const getAlertSource = (alert: any) => {
-  if (alert.alert_type === 'log') {
+  if (alert.alert_type === "log") {
     return alert.logfile_path;
-  } else if (alert.alert_type === 'metric') {
+  } else if (alert.alert_type === "metric") {
     return alert.metric_name;
   } else if (alert.alert_type === "service_name") {
     return alert.service_name;
@@ -57,7 +57,7 @@ const getNotificationTarget = (alert: any) => {
           </ol>
         </nav>
         <div class="mb-0 py-2">
-          <a class="btn btn-primary">New Alert</a>
+          <router-link to="/alerts/create" class="btn btn-primary">New Alert</router-link>
         </div>
       </div>
     </div>
@@ -84,18 +84,6 @@ const getNotificationTarget = (alert: any) => {
                         <td>{{ getAlertSource(alert) }}</td>
                         <td>{{ getNotificationTarget(alert) }}</td>
                       </tr>
-<!--                      <tr>-->
-<!--                        <th scope="row">2</th>-->
-<!--                        <td>Jacob</td>-->
-<!--                        <td>Thornton</td>-->
-<!--                        <td></td>-->
-<!--                      </tr>-->
-<!--                      <tr>-->
-<!--                        <th class="border-bottom-0" scope="row">3</th>-->
-<!--                        <td class="border-bottom-0">Larry</td>-->
-<!--                        <td class="border-bottom-0">the Bird</td>-->
-<!--                        <td class="border-bottom-0">@twitter</td>-->
-<!--                      </tr>-->
                     </tbody>
                   </table>
                 </div>
