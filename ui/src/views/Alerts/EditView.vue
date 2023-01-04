@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useAlertsStore } from "@/stores/alerts";
 
+const router = useRouter();
 const alertsStore = useAlertsStore();
 
-const selectedAlertType = ref();
+const formError = ref(false);
+const formErrorMessage = ref();
+const formErrorMessages = ref({
+  logfile: "",
+  regex: "",
+  serviceName: "",
+  metricTarget: "",
+});
+const selectedAlertType = ref("log");
 const logFilePath = ref();
 const logRegex = ref();
 const serviceName = ref();
@@ -14,9 +24,73 @@ const webhookUrl = ref();
 const webhookMethod = ref("GET");
 const cooldownTime = ref(30);
 
-const metricName = ref();
-const metricOperator = ref();
+const metricName = ref("cpu_usage");
+const metricOperator = ref("gte");
 const metricTargetValue = ref();
+
+const submitForm = async (submitEvent: any) => {
+  submitEvent.preventDefault();
+
+  formError.value = false;
+  formErrorMessages.value.logfile = "";
+  formErrorMessages.value.regex = "";
+  formErrorMessages.value.serviceName = "";
+  formErrorMessages.value.metricTarget = "";
+
+  const alert: any = {
+    alert_type: selectedAlertType.value,
+  };
+
+  if (selectedAlertType.value === "log") {
+    if (logFilePath.value == null) {
+      formErrorMessages.value.logfile = "Please provide the log file path";
+      formError.value = true;
+    }
+
+    if (logRegex.value == null) {
+      formErrorMessages.value.regex = "Please provide a valid regex";
+      formError.value = true;
+    }
+
+    alert.logfile_path = logFilePath.value;
+    alert.regex = logRegex.value;
+  } else if (selectedAlertType.value === "metric") {
+    if (metricTargetValue.value == null) {
+      formErrorMessages.value.metricTarget = "Please provide a number between 1 and 100";
+      formError.value = true;
+    }
+
+    alert.metric_name = metricName;
+    alert.metric_rule = {
+      operator: metricOperator.value,
+      target_value: metricTargetValue.value,
+    };
+  } else if (selectedAlertType.value === "service") {
+    if (serviceName.value == null) {
+      formErrorMessages.value.serviceName = "Please provide the name of the service you want to monitor";
+      formError.value = true;
+    }
+
+    alert.service_name = serviceName.value;
+  } else {
+    // todo error
+  }
+
+  alert.cooldown_time = cooldownTime.value;
+  alert.slack_webhook_url = slackWebhook.value;
+  alert.discord_webhook_url = discordWebhook.value;
+
+  if (formError.value !== false) {
+    return;
+  }
+
+  const creation = await alertsStore.createAlert(alert);
+  if (creation) {
+    await router.push("/alerts");
+  } else {
+    formErrorMessage.value = "could not create alert.";
+  }
+};
 </script>
 
 <template>
@@ -38,7 +112,7 @@ const metricTargetValue = ref();
             <li class="breadcrumb-item">
               <router-link to="/alerts">Alerts</router-link>
             </li>
-            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
           </ol>
         </nav>
       </div>
@@ -51,241 +125,94 @@ const metricTargetValue = ref();
               <div class="card-header">
               </div>
               <div class="card-body pt-0">
-                <form class="form-horizontal">
+                <div class="my-3"></div>
+                <form class="form-horizontal" @submit="submitForm">
                   <div class="row">
                     <label class="col-sm-3 form-label">Alert type</label>
                     <div class="col-sm-9">
-                      <select class="form-select mb-3" name="alert_type">
-                        <option>Log</option>
-                        <option>Metric</option>
-                        <option>Service</option>
+                      <select v-model="selectedAlertType" class="form-select mb-3" name="alert_type">
+                        <option value="log">Log</option>
+                        <option value="metric">Metric</option>
+                        <option value="service">Service</option>
                       </select>
                     </div>
 
-                    <label class="col-sm-3 form-label">Normal</label>
-                    <div class="col-sm-9">
-                      <input class="form-control" type="text">
+                    <label v-if="selectedAlertType === 'log'" class="col-sm-3 form-label">Log file</label>
+                    <div v-if="selectedAlertType === 'log'" class="col-sm-9 mb-3">
+                      <input v-model="logFilePath" class="form-control" :class="{'is-invalid': formErrorMessages.logfile != ''}" type="text" placeholder="example: /var/log/apache2/error.log">
+                      <div v-if="formErrorMessages.logfile != ''" class="invalid-feedback">{{ formErrorMessages.logfile }}</div>
                     </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Help text</label>
-                    <div class="col-sm-9">
-                      <input class="form-control" type="text"><small class="form-text">A block of help text that breaks onto a new line and may extend beyond one line.</small>
+
+                    <label v-if="selectedAlertType === 'log'" class="col-sm-3 form-label">Regex</label>
+                    <div v-if="selectedAlertType === 'log'" class="col-sm-9 mb-3">
+                      <input v-model="logRegex" class="form-control" :class="{'is-invalid': formErrorMessages.regex != ''}" type="text" placeholder="(error|critical)">
+                      <div v-if="formErrorMessages.regex != ''" class="invalid-feedback">{{ formErrorMessages.regex }}</div>
+                      <small>regex to test for triggering this alert, for example detecting error logs.</small>
                     </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Password</label>
-                    <div class="col-sm-9">
-                      <input class="form-control" type="password" name="password">
+
+                    <label v-if="selectedAlertType === 'service'" class="col-sm-3 form-label">Service name</label>
+                    <div v-if="selectedAlertType === 'service'" class="col-sm-9 mb-3">
+                      <input v-model="serviceName" class="form-control" :class="{'is-invalid': formErrorMessages.serviceName != ''}" type="text" placeholder="nginx">
+                      <div v-if="formErrorMessages.serviceName != ''" class="invalid-feedback">{{ formErrorMessages.serviceName }}</div>
+                      <small>SystemD service like <b>apache2</b> or <b>nginx</b>, this alert will be triggered if the provided service goes down.</small>
                     </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Placeholder</label>
-                    <div class="col-sm-9">
-                      <input class="form-control" type="text" placeholder="placeholder">
-                    </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Disabled</label>
-                    <div class="col-sm-9">
-                      <input class="form-control" type="text" disabled="" placeholder="Disabled input here...">
-                    </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Checkboxes &amp; radios <br><small class="text-primary">Custom elements</small></label>
-                    <div class="col-sm-9">
-                      <div class="form-check">
-                        <input class="form-check-input" id="defaultCheck0" type="checkbox">
-                        <label class="form-check-label" for="defaultCheck0">Option one</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" id="defaultCheck1" type="checkbox" checked>
-                        <label class="form-check-label" for="defaultCheck1">Option two checked</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" id="defaultCheck2" type="checkbox" checked disabled>
-                        <label class="form-check-label" for="defaultCheck2">Option three checked and disabled</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" id="defaultCheck3" type="checkbox" disabled>
-                        <label class="form-check-label" for="defaultCheck3">Option four disabled</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" id="defaultRadio0" type="radio" name="exampleRadios">
-                        <label class="form-check-label" for="defaultRadio0">Option one</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" id="defaultRadio1" type="radio" name="exampleRadios" checked>
-                        <label class="form-check-label" for="defaultRadio1">Option two checked</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" id="defaultRadio2" type="radio" name="exampleRadios" checked disabled>
-                        <label class="form-check-label" for="defaultRadio2">Option three checked and disabled</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" id="defaultRadio3" type="radio" name="exampleRadios" disabled>
-                        <label class="form-check-label" for="defaultRadio3">Option four disabled</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Select</label>
-                    <div class="col-sm-9">
-                      <select class="form-select mb-3" name="account">
-                        <option>option 1</option>
-                        <option>option 2</option>
-                        <option>option 3</option>
-                        <option>option 4</option>
+
+                    <label v-if="selectedAlertType === 'metric'" class="col-sm-3 form-label">Choose metric</label>
+                    <div v-if="selectedAlertType === 'metric'" class="col-sm-9 col-lg-2 mb-2">
+                      <select v-model="metricName" class="form-select">
+                        <option value="cpu_usage" selected>CPU usage</option>
+                        <option value="memory_percent">Memory usage</option>
+                        <option value="disk_percent">Disk usage</option>
                       </select>
                     </div>
-                    <div class="col-sm-9 offset-sm-3">
-                      <select class="form-select" multiple="">
-                        <option>option 1</option>
-                        <option>option 2</option>
-                        <option>option 3</option>
-                        <option>option 4</option>
+
+                    <div v-if="selectedAlertType === 'metric'" class="col-sm-9 col-lg-1 mb-2">
+                      <select v-model="metricOperator" class="form-select">
+                        <option value="eq" selected>==</option>
+                        <option value="gt">&gt;</option>
+                        <option value="lt">&lt;</option>
+                        <option value="gte">&gt;=</option>
+                        <option value="lte">&lt;=</option>
                       </select>
                     </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label" for="formFile">File input</label>
-                    <div class="col-sm-9">
-                      <input class="form-control" id="formFile" type="file">
+
+                    <div v-if="selectedAlertType === 'metric'" class="col-sm-9 col-lg-2 mb-3">
+                      <input v-model="metricTargetValue" class="form-control" :class="{'is-invalid': formErrorMessages.metricTarget != ''}" type="number" placeholder="90%">
+                      <div v-if="formErrorMessages.metricTarget != ''" class="invalid-feedback">{{ formErrorMessages.metricTarget }}</div>
                     </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Input with success</label>
-                    <div class="col-sm-9">
-                      <input class="form-control is-valid" type="text">
-                      <div class="valid-feedback">Looks good!</div>
+
+                    <div class="col-12"></div>
+
+                    <label class="col-sm-3 form-label">Cooldown time</label>
+                    <div class="col-sm-9 mb-3">
+                      <input v-model="cooldownTime" class="form-control" type="number" placeholder="default: 30">
+                      <small>Time (seconds) to wait before triggering the alert again. To avoid spam</small>
                     </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Input with error</label>
+
+                    <label class="col-sm-3 form-label">Slack webhook URL</label>
                     <div class="col-sm-9">
-                      <input class="form-control is-invalid" type="text">
-                      <div class="invalid-feedback">Please provide your name.</div>
+                      <input v-model="slackWebhook" class="form-control mb-3" type="text" placeholder="slack webhook...">
                     </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Control sizing</label>
+
+                    <label class="col-sm-3 form-label">Discord webhook URL</label>
                     <div class="col-sm-9">
-                      <input class="form-control form-control-lg mb-3" type="text" placeholder=".input-lg">
-                      <input class="form-control mb-3" type="text" placeholder="Default input">
-                      <input class="form-control form-control-sm mb-3" type="text" placeholder=".input-sm">
+                      <input v-model="discordWebhook" class="form-control mb-3" type="text" placeholder="discord webhook...">
                     </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Column sizing</label>
-                    <div class="col-sm-9">
-                      <div class="row">
-                        <div class="col-md-3">
-                          <input class="form-control" type="text" placeholder=".col-md-3">
-                        </div>
-                        <div class="col-md-4">
-                          <input class="form-control" type="text" placeholder=".col-md-4">
-                        </div>
-                        <div class="col-md-5">
-                          <input class="form-control" type="text" placeholder=".col-md-5">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="my-4"> </div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Material Inputs</label>
-                    <div class="col-sm-9">
-                      <div class="input-material-group mb-3">
-                        <input class="input-material" id="register-username" type="text" name="registerUsername" required value="Jason Doe">
-                        <label class="label-material" for="register-username">Username</label>
-                      </div>
-                      <div class="input-material-group mb-3">
-                        <input class="input-material" id="register-email" type="email" name="registerEmail" required>
-                        <label class="label-material" for="register-email">Email Address      </label>
-                      </div>
-                      <div class="input-material-group mb-3">
-                        <input class="input-material" id="register-password" type="password" name="registerPassword" required>
-                        <label class="label-material" for="register-password">Password     </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Input groups</label>
-                    <div class="col-sm-9">
-                      <div class="input-group mb-3"><span class="input-group-text" id="basic-addon1">@</span>
-                        <input class="form-control" type="text" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-                      </div>
-                      <div class="input-group mb-3">
-                        <input class="form-control" type="text" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2"><span class="input-group-text" id="basic-addon2">@</span>
-                      </div>
-                      <div class="input-group mb-3">
-                        <div class="input-group-text">
-                          <input class="form-check-input mt-0" type="checkbox" aria-label="Checkbox for following text input">
-                        </div>
-                        <input class="form-control" type="text" aria-label="Text input with checkbox">
-                      </div>
-                      <div class="input-group mb-3">
-                        <input class="form-control" type="text" aria-label="Text input with radio button">
-                        <div class="input-group-text">
-                          <input class="form-check-input mt-0" type="radio" aria-label="Radio button for following text input">
-                        </div>
-                      </div>
-                      <div class="input-group mb-3"><span class="input-group-text">$</span><span class="input-group-text">0.00</span>
-                        <input class="form-control" type="text" aria-label="Dollar amount (with dot and two decimal places)">
-                      </div>
-                      <div class="input-group">
-                        <input class="form-control" type="text" aria-label="Dollar amount (with dot and two decimal places)"><span class="input-group-text">$</span><span class="input-group-text">0.00</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">Button addons</label>
-                    <div class="col-sm-9">
-                      <div class="input-group mb-3">
-                        <button class="btn btn-primary" id="button-addon1" type="button">Button</button>
-                        <input class="form-control" type="text" placeholder aria-label="Example text with button addon" aria-describedby="button-addon1">
-                      </div>
-                      <div class="input-group">
-                        <input class="form-control" type="text" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
-                        <button class="btn btn-primary" id="button-addon2" type="button">Button</button>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
-                    <label class="col-sm-3 form-label">With dropdowns</label>
-                    <div class="col-sm-9">
-                      <div class="input-group">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</button>
-                        <ul class="dropdown-menu dropdown-menu-dark shadow-sm">
-                          <li><a class="dropdown-item" href="#">Action</a></li>
-                          <li><a class="dropdown-item" href="#">Another action</a></li>
-                          <li><a class="dropdown-item" href="#">Something else here</a></li>
-                          <li><a class="dropdown-item" href="#">Separated link</a></li>
-                        </ul>
-                        <input class="form-control" type="text" aria-label="Text input with dropdown button">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="my-4"></div>
-                  <div class="row">
+
                     <div class="col-sm-9 ms-auto">
-                      <button class="btn btn-secondary" type="reset">Cancel</button>
-                      <button class="btn btn-primary" type="submit">Save changes</button>
+                      <div v-if="formErrorMessage != null" class="error-wrapper mt-3 mb-3">
+                        <div class="js-validate-error-label" style="color: #B81111">{{ formErrorMessage }}</div>
+                      </div>
                     </div>
+
+                    <div class="my-2"></div>
+
+                    <div class="col-sm-9 ms-auto">
+<!--                      <button class="btn btn-secondary" type="reset">Cancel</button>-->
+                      <button class="btn btn-primary" type="submit">Save</button>
+                    </div>
+
+                    <div class="my-2"></div>
                   </div>
                 </form>
               </div>
@@ -296,3 +223,9 @@ const metricTargetValue = ref();
     </section>
   </div>
 </template>
+
+<style scoped>
+.btn {
+  margin-right: 5px;
+}
+</style>

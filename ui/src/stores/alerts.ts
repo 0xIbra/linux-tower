@@ -31,5 +31,23 @@ export const useAlertsStore = defineStore({
         throw e;
       }
     },
+
+    async createAlert(alert: any) {
+      try {
+        const response = await axios.request({
+          method: "POST",
+          baseURL: config.apiBaseEndpoint,
+          url: "/api/alerts",
+          headers: { Authorization: this.authStore.accessToken, "Content-Type": "application/json" },
+          data: alert,
+        });
+
+        if (response.status === 200) {
+          return true;
+        }
+      } catch (e) {}
+
+      return false;
+    },
   },
 });

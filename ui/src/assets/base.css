@@ -11883,7 +11883,7 @@ nav#sidebar.shrinked .sidebar-header .title {
 
 .sidebar-item.active > .sidebar-link {
   background: #32353b;
-  border-left: 2px solid #db6574;
+  border-left: 2px solid var(--text-primary);
   color: #adb5bd;
 }
 
