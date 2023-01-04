@@ -1,19 +1,32 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { getCurrentInstance, onMounted} from "vue";
+import { useRouter } from "vue-router";
 import { useAlertsStore } from "@/stores/alerts";
 
+const router = useRouter();
 const alertsStore = useAlertsStore();
 
 onMounted(async () => {
   await alertsStore.getAlerts();
 });
 
+const showAlert = async (id: Number) => {
+  await router.push("/alerts/" + id);
+};
+
+const deleteAlert = async (id: Number) => {
+  await alertsStore.deleteAlert(id);
+
+  const instance = getCurrentInstance();
+  instance?.proxy?.$forceUpdate();
+};
+
 const getAlertSource = (alert: any) => {
   if (alert.alert_type === "log") {
     return alert.logfile_path;
   } else if (alert.alert_type === "metric") {
     return alert.metric_name;
-  } else if (alert.alert_type === "service_name") {
+  } else if (alert.alert_type === "service") {
     return alert.service_name;
   } else {
     throw new Error(`Unsupported alert type: ${alert.alert_type}`);
@@ -75,14 +88,22 @@ const getNotificationTarget = (alert: any) => {
                         <th>Type</th>
                         <th>Source</th>
                         <th>Notification target</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody v-if="alertsStore.data != null">
-                      <tr v-for="alert in alertsStore.data" class="cursor-pointer">
-                        <th scope="row">{{ alert["id"] }}</th>
-                        <td>{{ alert["alert_type"] }}</td>
-                        <td>{{ getAlertSource(alert) }}</td>
-                        <td>{{ getNotificationTarget(alert) }}</td>
+                      <tr v-for="alertItem in alertsStore.data" class="cursor-pointer" @click="showAlert(alertItem.id)">
+                        <th scope="row">{{ alertItem["id"] }}</th>
+                        <td>{{ alertItem["alert_type"] }}</td>
+                        <td>{{ getAlertSource(alertItem) }}</td>
+                        <td>{{ getNotificationTarget(alertItem) }}</td>
+                        <td>
+                          <button class="btn btn-danger btn-sm btn-small" @click="deleteAlert(alertItem.id)">
+                            <svg class="svg-icon svg-icon-sm">
+                              <use xlink:href="#bin-1"></use>
+                            </svg>
+                          </button>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -95,3 +116,10 @@ const getNotificationTarget = (alert: any) => {
     </section>
   </div>
 </template>
+
+<style scoped>
+.btn-small > svg {
+  width: 15px;
+  height: 15px;
+}
+</style>

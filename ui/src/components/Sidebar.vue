@@ -77,7 +77,7 @@ const programsUpdateInterval = setInterval(async () => {
           <span>MySQL</span>
         </router-link>
       </li>
-      <li class="sidebar-item" :class="{active: ['alerts', 'alertCreateOrEdit'].includes($route.name)}">
+      <li class="sidebar-item" :class="{active: ['alerts', 'createAlert', 'editAlert'].includes($route.name)}">
         <router-link class="sidebar-link" to="/alerts">
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
             <use xlink:href="#survey-1"></use>

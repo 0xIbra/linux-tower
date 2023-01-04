@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useAlertsStore } from "@/stores/alerts";
 
 const router = useRouter();
+const route = useRoute();
 const alertsStore = useAlertsStore();
 
 const formError = ref(false);
@@ -14,6 +15,7 @@ const formErrorMessages = ref({
   serviceName: "",
   metricTarget: "",
 });
+const alertId = ref();
 const selectedAlertType = ref("log");
 const logFilePath = ref();
 const logRegex = ref();
@@ -28,6 +30,30 @@ const metricName = ref("cpu_usage");
 const metricOperator = ref("gte");
 const metricTargetValue = ref();
 
+onMounted(async () => {
+  if (route.name === "editAlert") {
+    const id: any = route.params.id;
+    const alert = await alertsStore.getAlert(id);
+    if (alert == null) {
+      await router.back();
+    }
+
+    alertId.value = alert.id;
+    selectedAlertType.value = alert.alert_type;
+    logFilePath.value = alert.logfile_path;
+    logRegex.value = alert.regex;
+    serviceName.value = alert.service_name;
+    slackWebhook.value = alert.slack_webhook_url;
+    discordWebhook.value = alert.discord_webhook_url;
+    cooldownTime.value = alert.cooldown_time;
+    metricName.value = alert.metric_name;
+    if (alert.metric_rule != null) {
+      metricOperator.value = alert.metric_rule.operator;
+      metricTargetValue.value = alert.metric_rule.target_value;
+    }
+  }
+});
+
 const submitForm = async (submitEvent: any) => {
   submitEvent.preventDefault();
 
@@ -40,6 +66,10 @@ const submitForm = async (submitEvent: any) => {
   const alert: any = {
     alert_type: selectedAlertType.value,
   };
+
+  if (route.name === "editAlert") {
+    alert.id = alertId.value;
+  }
 
   if (selectedAlertType.value === "log") {
     if (logFilePath.value == null) {
@@ -84,11 +114,27 @@ const submitForm = async (submitEvent: any) => {
     return;
   }
 
-  const creation = await alertsStore.createAlert(alert);
-  if (creation) {
-    await router.push("/alerts");
+  if (route.name === "createAlert") {
+    const creation = await alertsStore.createAlert(alert);
+    if (creation) {
+      await router.push("/alerts");
+    } else {
+      formErrorMessage.value = "could not create alert.";
+    }
   } else {
-    formErrorMessage.value = "could not create alert.";
+    const update = await alertsStore.updateAlert(alert);
+    if (update) {
+      await router.push("/alerts");
+    } else {
+      formErrorMessage.value = "could not update alert.";
+    }
+  }
+};
+
+const deleteAlert = async () => {
+  let result = await alertsStore.deleteAlert(alertId.value);
+  if (result) {
+    await router.push("/alerts");
   }
 };
 </script>
@@ -112,7 +158,8 @@ const submitForm = async (submitEvent: any) => {
             <li class="breadcrumb-item">
               <router-link to="/alerts">Alerts</router-link>
             </li>
-            <li class="breadcrumb-item active" aria-current="page">Create</li>
+            <li v-if="alertId == null" class="breadcrumb-item active" aria-current="page">Create</li>
+            <li v-if="alertId != null" class="breadcrumb-item active" aria-current="page">#{{alertId}}</li>
           </ol>
         </nav>
       </div>
@@ -208,8 +255,9 @@ const submitForm = async (submitEvent: any) => {
                     <div class="my-2"></div>
 
                     <div class="col-sm-9 ms-auto">
-<!--                      <button class="btn btn-secondary" type="reset">Cancel</button>-->
-                      <button class="btn btn-primary" type="submit">Save</button>
+                      <button v-if="alertId == null" class="btn btn-primary" type="submit">Save</button>
+                      <button v-if="alertId != null" class="btn btn-primary" type="submit">Save changes</button>
+                      <button v-if="alertId != null" class="btn btn-danger" @click="deleteAlert">Delete</button>
                     </div>
 
                     <div class="my-2"></div>

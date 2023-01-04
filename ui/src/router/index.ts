@@ -39,7 +39,12 @@ const router = createRouter({
     },
     {
       path: "/alerts/create",
-      name: "alertCreateOrEdit",
+      name: "createAlert",
+      component: () => import("../views/Alerts/EditView.vue"),
+    },
+    {
+      path: "/alerts/:id",
+      name: "editAlert",
       component: () => import("../views/Alerts/EditView.vue"),
     },
   ],
