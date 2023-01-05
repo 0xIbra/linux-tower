@@ -10,18 +10,35 @@ const route = useRoute();
 
 const authStore = useAuthStore();
 
-const logFilePath = ref("/var/log/apache2/access.log");
+const logFilePath = ref("/var/log/syslog");
+const filterRegex = ref("");
 const logs = ref([]);
 
-const tailLogs = async (logFile: String) => {
+const tailLogs = async () => {
   const response = await axios.request({
     method: "GET",
     baseURL: config.apiBaseEndpoint,
-    url: "/api/logs/tail?log_file=" + logFile,
+    url: "/api/logs/tail?log_file=" + logFilePath.value,
     headers: { Authorization: authStore.accessToken },
   });
 
   return response.data["logs"];
+};
+
+const queryLogs = async () => {
+  const params = new URLSearchParams({
+    log_file: logFilePath.value,
+    query: filterRegex.value,
+  }).toString();
+
+  const response = await axios.request({
+    method: "GET",
+    baseURL: config.apiBaseEndpoint,
+    url: "/api/logs/query?" + params,
+    headers: { Authorization: authStore.accessToken },
+  });
+
+  return response.data['logs'];
 };
 
 const render = () => {
@@ -32,11 +49,15 @@ const render = () => {
 const update = async (e: any) => {
   e.preventDefault();
 
-  logs.value = await tailLogs(logFilePath.value);
+  if (filterRegex.value != "" && filterRegex.value != null) {
+    logs.value = await queryLogs();
+  } else {
+    logs.value = await tailLogs();
+  }
 };
 
 onMounted(async () => {
-  logs.value = await tailLogs(logFilePath.value);
+  logs.value = await tailLogs();
 });
 </script>
 
@@ -64,10 +85,10 @@ onMounted(async () => {
       </div>
       <section class="tables py-0">
         <div class="container-fluid">
-          <div class="row gy-4">
+          <div class="row">
             <div class="col-lg-10">
               <div class="row">
-                <div class="col-12">
+                <div class="col-lg-12">
                   <div class="card">
                     <div class="card-body pt-0 modernize">
                       <div class="input-group">
@@ -82,11 +103,11 @@ onMounted(async () => {
                   </div>
                 </div>
 
-                <div class="col-12">
+                <div class="col-xl-12">
                   <div class="card mt-2">
                     <div class="card-body pt-0 modernize">
                       <div id="logs-wrapper">
-                        <p v-for="logItem in logs" class="log-text">{{ logItem.log }}</p>
+                        <p v-for="logItem in logs" class="log-text">{{ logItem.log.replace(/(.{230})..+/, "$1&hellip;") }}</p>
                       </div>
                     </div>
                   </div>
@@ -99,7 +120,7 @@ onMounted(async () => {
                 <div class="col-12">
                   <div class="card mb-0">
                     <div class="card-body p-0">
-                      <input class="form-control modernize h-modernize" type="text" placeholder="Filter logs">
+                      <input v-model="filterRegex" class="form-control modernize h-modernize" type="text" placeholder="Filter logs">
                     </div>
                   </div>
                 </div>
