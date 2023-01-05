@@ -47,6 +47,11 @@ const router = createRouter({
       name: "editAlert",
       component: () => import("../views/Alerts/EditView.vue"),
     },
+    {
+      path: "/logs",
+      name: "logs",
+      component: () => import("../views/LogsView.vue"),
+    },
   ],
 });
 

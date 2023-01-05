@@ -85,13 +85,13 @@ const programsUpdateInterval = setInterval(async () => {
           <span>Alerts</span>
         </router-link>
       </li>
-      <li class="sidebar-item">
-        <a class="sidebar-link" href="login.html">
+      <li class="sidebar-item" :class="{ active: $route.name === 'logs' }">
+        <router-link class="sidebar-link" to="/logs">
           <svg class="svg-icon svg-icon-sm svg-icon-heavy">
             <use xlink:href="#disable-1"></use>
           </svg>
           <span>Logs</span>
-        </a>
+        </router-link>
       </li>
     </ul>
   </nav>
