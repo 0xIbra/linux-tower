@@ -1,3 +1,3 @@
 *.jinja2 linguist-detectable=false
 *.css linguist-detectable=false
-ui/public/ linguist-detectable=false
+ui/public/* linguist-detectable=false
