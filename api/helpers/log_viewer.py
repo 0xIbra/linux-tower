@@ -1,3 +1,4 @@
+import re
 import os
 
 
@@ -94,6 +95,27 @@ class LogViewer:
         for i, line in enumerate(fp):
             if from_line <= i <= to_line:
                 logs.append({'line': (i+1), 'log': line.strip()})
+        fp.close()
+
+        return logs, from_line, to_line
+
+    def read_regex(self, regex: str, from_line=None, to_line=None):
+        """
+        Reads file and returns all lines that match a give regex.
+        """
+
+        logs = []
+        if from_line is None:
+            from_line = 0
+        if to_line is None:
+            to_line = LogViewer.count_lines_in_file(self.__log_file)
+
+        fp = open(self.__log_file, mode='r', encoding='utf8')
+        for i, line in enumerate(fp):
+            if from_line <= i <= to_line:
+                line = line.strip()
+                if bool(re.search(rf"{regex}", line, re.IGNORECASE)):
+                    logs.append({'line': (i+1), 'log': line})
         fp.close()
 
         return logs, from_line, to_line

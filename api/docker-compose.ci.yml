@@ -19,6 +19,7 @@ services:
       - './tests/raw/cli/apache/vhosts:/etc/apache2/sites-enabled'
       - './tests/raw/cli/apache/vhosts:/etc/nginx/sites-enabled' # for more test coverage
       - './tests/raw/example.log:/var/log/syslog'
+      - './tests/raw/query_logs.log:/tmp/query_logs.log'
 
   python3.9:
     container_name: python3.9-tests

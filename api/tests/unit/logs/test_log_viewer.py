@@ -152,6 +152,31 @@ def test_read():
     delete_log_file()
 
 
+def test_read_regex():
+    """
+    GIVEN a LogViewer component that reads .log files
+    WHEN the 'read_regex' method is called with $regex parameter
+    THEN check that the returned result is lines from file that match the given regular expression
+    """
+
+    create_log_file()
+
+    pattern = "- 99"
+    viewer = LogViewer(LOG_FILE)
+    lines, from_line, to_line = viewer.read_regex(pattern)
+
+    expected = []
+    for i in range(99, 100):
+        expected.append({'line': i, 'log': f'{LOG_LINE} - {i}'})
+
+    assert type(lines) is list
+    assert len(lines) == 1
+    assert lines == expected
+    assert lines[0]['log'] == expected[0]['log']
+
+    delete_log_file()
+
+
 def test_read_lines_reverse():
     """
     GIVEN a LogViewer component that reads .log files
