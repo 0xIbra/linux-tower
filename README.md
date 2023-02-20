@@ -7,4 +7,4 @@ Linux Tower
 > with features like (monitoring, alerting, custom log alerts)
 
 ### Follow development here (github project)
-**Board:** https://github.com/users/ibra-akv/projects/7
+**Board:** https://github.com/users/0xibra/projects/7
