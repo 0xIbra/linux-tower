@@ -11,23 +11,51 @@ const route = useRoute();
 const authStore = useAuthStore();
 
 const liveTail = ref(false);
+const currentType = ref("tail");
+
 const logFilePath = ref("/var/log/syslog");
 const filterRegex = ref("");
-const logs = ref([]);
+const startLine = ref();
+const endLine = ref();
+
 const logFileError = ref("");
 
-const tailLogs = async () => {
+const logs = ref([]);
+
+const tailLogs = async (start = null, end = null) => {
+  currentType.value = "tail";
+
+  let params: any = {
+    log_file: logFilePath.value,
+    lines: 100,
+  };
+
+  if (start != null) {
+    params.start_line = start;
+  }
+  if (end != null) {
+    params.end_line = end;
+  }
+
+  params = new URLSearchParams(params);
+
   const response = await axios.request({
     method: "GET",
     baseURL: config.apiBaseEndpoint,
-    url: "/api/logs/tail?log_file=" + logFilePath.value,
+    url: "/api/logs/tail?" + params.toString(),
     headers: { Authorization: authStore.accessToken },
   });
 
-  return response.data["logs"];
+  return {
+    logs: response.data["logs"],
+    start: response.data["start_line"],
+    end: response.data["end_line"],
+  };
 };
 
 const queryLogs = async () => {
+  currentType.value = "query";
+
   const params = new URLSearchParams({
     log_file: logFilePath.value,
     query: filterRegex.value,
@@ -40,7 +68,25 @@ const queryLogs = async () => {
     headers: { Authorization: authStore.accessToken },
   });
 
-  return response.data["logs"];
+  return {
+    logs: response.data["logs"],
+    start: response.data["start_line"],
+    end: response.data["end_line"],
+  };
+};
+
+const previous = async () => {
+  let start: any;
+  let end: any;
+  if (currentType.value === "tail") {
+    start = startLine.value - 100;
+    end = startLine.value;
+  }
+
+  const res = await tailLogs(start, end);
+  startLine.value = res.start;
+
+  logs.value = res.logs.concat(logs.value);
 };
 
 const render = () => {
@@ -58,10 +104,18 @@ const update = async (e: any) => {
   }
 
   try {
+    let res: any;
     if (filterRegex.value != "" && filterRegex.value != null) {
-      logs.value = await queryLogs();
+      res = await queryLogs();
+      logs.value = res.logs;
     } else {
-      logs.value = await tailLogs();
+      res = await tailLogs();
+      logs.value = res.logs;
+    }
+
+    if (res) {
+      startLine.value = res.start;
+      endLine.value = res.end;
     }
   } catch (e: any) {
     logFileError.value = e.response.data["detail"];
@@ -69,7 +123,10 @@ const update = async (e: any) => {
 };
 
 onMounted(async () => {
-  logs.value = await tailLogs();
+  const res = await tailLogs();
+  logs.value = res.logs;
+  startLine.value = res.start;
+  endLine.value = res.end;
 });
 </script>
 
@@ -103,7 +160,7 @@ onMounted(async () => {
                             <use xlink:href="#literature-1"></use>
                           </svg>
                         </span>
-                        <input v-model="logFilePath" class="form-control modernize h-modernize" :class="{'is-invalid': logFileError != ''}" type="text" placeholder="search for logs using regex" />
+                        <input v-model="logFilePath" id="logfilePath" class="form-control modernize h-modernize" :class="{'is-invalid': logFileError != ''}" type="text" placeholder="search for logs using regex" />
                       </div>
                     </div>
                   </div>
@@ -112,6 +169,7 @@ onMounted(async () => {
                 <div class="col-xl-12">
                   <div class="card mt-2">
                     <div class="card-body pt-0 modernize">
+                      <div v-if="!liveTail" class="text-center p-0 m-0 pt-1 pb-1 cursor-pointer load-more" @click="previous">Load more</div>
                       <div id="logs-wrapper">
                         <p v-for="logItem in logs" class="log-text">{{ logItem.log.replace(/(.{220})..+/, "$1&hellip;") }}</p>
                       </div>
@@ -171,6 +229,11 @@ html, body {
   overflow-y: scroll;
 }
 
+input::selection {
+  color: #d9d9d9;
+  background: #0c63e4;
+}
+
 .log-text {
   font-size: 13px;
   cursor: pointer;
@@ -222,6 +285,14 @@ input.h-modernize {
 }
 
 ::-webkit-scrollbar-corner {
+}
+
+.load-more {
+  cursor: pointer;
+}
+
+.load-more:hover {
+  background: #2f333a;
 }
 
 .btn-primary[disabled] {
