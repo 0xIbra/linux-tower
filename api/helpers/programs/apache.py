@@ -1,6 +1,7 @@
 from helpers import exec_shell, service_show
 from helpers.process_finder import Process
 from exceptions import ApacheNotRunning
+import dbus
 import psutil
 import os
 
@@ -64,3 +65,16 @@ class Apache:
                 'percent': percent
             }
         }
+
+    @staticmethod
+    def restart():
+        """
+        restart apache2 service via DBUS
+        """
+
+        sys_bus = dbus.SystemBus()
+        sys_object = sys_bus.get_object('org.freedesktop.systemd1', '/org/freedesktop/systemd1')
+        sysd_manager = dbus.Interface(sys_object, 'org.freedesktop.systemd1.Manager')
+        sysd_manager.RestartUnit('apache2.service', 'replace')
+
+        return True

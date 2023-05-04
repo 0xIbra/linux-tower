@@ -35,3 +35,17 @@ def apache_metrics_endpoint():
         return jsonify({'detail': 'Apache is not running.'}), 400
 
     return jsonify(metrics), 200
+
+
+@blueprint.route('/api/apache/restart')
+@is_authenticated
+def apache_restart():
+    is_installed = Apache.is_installed()
+    if is_installed is not True:
+        return jsonify({'detail': 'Apache does not seem to be installed on this server.'}), 404
+
+    try:
+        Apache.restart()
+    except Exception as e:
+        print(e)
+        exit()

@@ -5,3 +5,4 @@ pyjwt
 psutil
 simplepam
 apscheduler
+dbus-python
