@@ -23,6 +23,7 @@ def authentication_endpoint():
         'iat': now,
         'exp': exp
     }
-    access_token = jwt.encode(payload, app.config['SECRET_KEY'], 'HS256')
+
+    access_token = jwt.encode(payload, app.config['SECRET_KEY'], 'HS256').decode('utf8')
 
     return jsonify({'access_token': access_token})
